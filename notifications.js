@@ -46,6 +46,11 @@ onload = function() {
     // execute every time the page is done loading
     // this will inject the code into any page that happens to load
     function loadstop() {
+        // we do not want to register events more than once
+        if (loadDone) {
+            return loadCode();
+        }
+
         loadDone = true;
 
         webview.addEventListener('myCustomEvent', function() {
@@ -89,6 +94,8 @@ onload = function() {
             chrome.notifications.create(id, opts, function() {
                 console.log('notification callback', arguments);
             });
+
+            // new Notification(data.message);
         }
     });
 };

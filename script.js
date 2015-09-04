@@ -1,6 +1,18 @@
 /* jshint browser: true */
 
 /////////////////////////////////////////
+// This file should only be executed once
+/////////////////////////////////////////
+
+// this is particularly an issue when the user has to sign in
+// before starting to use the app
+if (window.__hipchatBootstrapCongiged__) {
+    return;
+}
+
+window.__hipchatBootstrapCongiged__ = true;
+
+/////////////////////////////////////////
 // Register messaging with the parent
 /////////////////////////////////////////
 var appWindow, appOrigin;
@@ -43,7 +55,9 @@ function NewNotification(title, options) {
         body: options.body
     };
 
-    notify(notification);
+    setTimeout(function(){
+        notify(notification);
+    }, 500);
 }
 NewNotification.requestPermission = function(callback) {
     callback = (typeof callback === 'function') ? callback : function noop() {};
@@ -61,6 +75,7 @@ function notify(opts) {
     return send({
         type: 'notification',
         title: opts.title,
-        message: opts.body
+        message: opts.body,
+        eventTime: Date.now()
     });
 }
