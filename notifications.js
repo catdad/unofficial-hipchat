@@ -8,9 +8,7 @@ onload = function() {
     var webview =$('#chat');
 
     // generate the absolute URL for the content script
-    var a = document.createElement('a');
-    a.href = 'script.js';
-    var fullUrl = a.href;
+    var fullUrl = chrome.runtime.getURL('script.js');
 
     // some vars to save the state
     var code = '';
@@ -65,12 +63,32 @@ onload = function() {
             window.open(ev.targetUrl);
         });
 
+        webview.addEventListener('permissionrequest', function(ev) {
+            console.log('permission', ev);
+        });
+
         loadCode();
     }
 
     webview.addEventListener('contentload', loadstop);
 
-    window.addEventListener('message', function(e) {
-        console.log(e.data);
+    window.addEventListener('message', function(ev) {
+        var data = ev.data;
+        console.log(data);
+
+        if (data.type && data.type === 'notification') {
+            var id = (Math.floor(Math.random() * 9007199254740992) + 1).toString();
+            var opts = {
+                title: data.title || 'HipChat',
+                type: chrome.notifications.TemplateType.BASIC,
+                message: data.message,
+                priority: 2,
+                iconUrl: chrome.runtime.getURL('128.png')
+            };
+
+            chrome.notifications.create(id, opts, function() {
+                console.log('notification callback', arguments);
+            });
+        }
     });
 };
