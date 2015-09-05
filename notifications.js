@@ -6,7 +6,7 @@ onload = function() {
 		return document.querySelector(sel);
 	};
 
-    var webview =$('#chat');
+    var webview = $('#chat');
 
     // generate the absolute URL for the content script
     var fullUrl = chrome.runtime.getURL('script.js');
@@ -23,8 +23,8 @@ onload = function() {
             // generate executable code
             code = '!function(){\n ' +
                     xmlHttp.responseText + '\n' +
-                    '}(); \n';
-
+                   '}(window); \n';
+            
             scriptDone = true;
             loadCode();
         }
@@ -40,6 +40,8 @@ onload = function() {
 
         webview.executeScript({ code: code }, function(){
             console.log('script was executed', arguments);
+            // post the first message, to initialize message sending from the
+            // guest webiew page
             webview.contentWindow.postMessage('thing', '*');
         });
     }
@@ -54,10 +56,6 @@ onload = function() {
 
         loadDone = true;
 
-        webview.addEventListener('myCustomEvent', function() {
-            console.log('myCustomEvent', arguments);
-        });
-
         // catch all console logging from the webview
         webview.addEventListener('consolemessage', function(ev) {
             console.log('HipChat says: %c%s', 'color: blue', ev.message);
@@ -69,11 +67,20 @@ onload = function() {
             window.open(ev.targetUrl);
         });
 
-        webview.addEventListener('permissionrequest', function(ev) {
-            // allow all the things
-            ev.request.allow();
-        });
-
+        // catch all permision requests and allow them
+//        webview.addEventListener('permissionrequest', function(ev) {
+//            // allow all the things
+//            ev.request.allow();
+//        });
+        
+//        webview.request.onCompleted.addListener(function(details) { 
+//            var bindAddr = 'https://likeabosh.hipchat.com/http-bind/';
+//            
+//            if (details.url === bindAddr && details.statusCode === 200) {
+//                console.log('details', details);
+//            }
+//        }, { urls: ["*://*/*"] });
+        
         loadCode();
     }
 
@@ -85,11 +92,12 @@ onload = function() {
 
         if (data.type && data.type === 'notification') {
             var id = (Math.floor(Math.random() * 9007199254740992) + 1).toString();
+            
             var opts = {
                 title: data.title || 'HipChat',
                 type: chrome.notifications.TemplateType.BASIC,
                 message: data.message,
-                priority: 2,
+                priority: 0,
                 iconUrl: chrome.runtime.getURL('128.png')
             };
 
