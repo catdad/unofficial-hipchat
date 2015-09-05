@@ -1,4 +1,5 @@
 /* jshint browser: true */
+/* global chrome, console */
 
 onload = function() {
     var $ = function(sel) {
@@ -27,7 +28,7 @@ onload = function() {
             scriptDone = true;
             loadCode();
         }
-    }
+    };
     xmlHttp.open("GET", fullUrl, true); // true for asynchronous
     xmlHttp.send(null);
 
@@ -69,7 +70,8 @@ onload = function() {
         });
 
         webview.addEventListener('permissionrequest', function(ev) {
-            console.log('permission', ev);
+            // allow all the things
+            ev.request.allow();
         });
 
         loadCode();
@@ -94,8 +96,6 @@ onload = function() {
             chrome.notifications.create(id, opts, function() {
                 console.log('notification callback', arguments);
             });
-
-            // new Notification(data.message);
         }
     });
 };
