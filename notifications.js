@@ -98,7 +98,7 @@ onload = function() {
                 type: chrome.notifications.TemplateType.BASIC,
                 message: data.message,
                 priority: 0,
-                iconUrl: chrome.runtime.getURL('128.png')
+                iconUrl: chrome.runtime.getURL('assets/128.png')
             };
 
             chrome.notifications.create(id, opts, function() {

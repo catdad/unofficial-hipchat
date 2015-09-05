@@ -5,7 +5,10 @@
     "minimum_chrome_version": "24.0.1307.0",
     "version": "1.0",
     "icons": {
-        "128": "128.png"
+        "16": "assets/16.png",
+        "32": "assets/32.png",
+        "128": "assets/128.png",
+        "256": "assets/256.png"
     },
     "app": {
         "background": {
