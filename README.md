@@ -14,6 +14,13 @@ As a developer, I cannot stand for this, and refuse to use such a bad applicatio
 
 Download this repo and load it as an unpackaged app in Chrome.
 
+###Building
+
+After installing Node, building is as easy as:
+
+    npm install
+    gulp
+
 ###Contributions
 
 Yes, please. Submit issues, PRs, etc.
