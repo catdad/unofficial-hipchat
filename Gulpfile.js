@@ -13,6 +13,8 @@ var zip = require('gulp-zip');
 var argv = require('yargs').argv;
 var package = require('./package.json');
 
+process.title = package.name + ' (build)';
+
 var production = (function() {
     return argv.p || argv.production;
 })();
@@ -23,12 +25,12 @@ var version = package.version + '.' + epoch;
 
 var BuildDest = './build';
 var JSSource = [
-    'main.js',
-    'notifications.js',
-    'script.js'
+    './main.js',
+    './notifications.js',
+    './script.js'
 ];
-var HTMLSource = '*.html';
-var ManifestSource = 'manifest.json';
+var HTMLSource = './*.html';
+var ManifestSource = './manifest.json';
 var AssetsSource = './assets/**';
 
 gulp.task('clean', function() {
@@ -79,8 +81,8 @@ gulp.task('default', ['clean'], function() {
 });
 
 gulp.task('watch', ['default'], function() {
-    gulp.watch(JSSource, ['js']);
-    gulp.watch(HTMLSource, ['html']);
-    gulp.watch(ManifestSource, ['manifest']);
-    gulp.watch(AssetsSource, ['assets']);
+    gulp.watch(JSSource, ['js']); //.on('change', function(ev) { console.log('js', ev.path); });
+    gulp.watch(HTMLSource, ['html']); //.on('change', function(ev) { console.log('html', ev.path); });
+    gulp.watch(ManifestSource, ['manifest']); //.on('change', function(ev) { console.log('manifest', ev.path); });
+    gulp.watch(AssetsSource, ['assets']); //.on('change', function(ev) { console.log('assets', ev.path); });
 });
