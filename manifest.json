@@ -2,8 +2,8 @@
     "manifest_version": 2,
     "name": "HipChat",
     "description": "A totally hip chat.",
-    "minimum_chrome_version": "24.0.1307.0",
-    "version": "1.0",
+    "minimum_chrome_version": "42.0.0.0",
+    "version": "1.0.0",
     "icons": {
         "16": "assets/16.png",
         "32": "assets/32.png",
@@ -16,10 +16,10 @@
         }
     },
     "permissions": [
-        "unlimitedStorage",
-        "notifications",
         "background",
+        "idle",
         "notifications",
+        "unlimitedStorage",
         "webview"
     ]
 }

@@ -2,11 +2,60 @@
 /* global chrome, console */
 
 onload = function() {
+    // some utils
     var $ = function(sel) {
 		return document.querySelector(sel);
 	};
+    $.forEach = function(obj, cb, context){
+        // check for a native forEach function
+        var native = [].forEach,
+            hasProp = Object.prototype.hasOwnProperty,
+            callback = (typeof cb === 'function') ? cb : function noop() {};
+
+        // if there is a native function, use it
+        if (native && obj.forEach === native) {
+            //don't bother if there is no function
+            obj.forEach(callback, context);
+        }
+        // if the object is array-like
+        else if (obj.length === +obj.length) {
+            // loop though all values
+            for (var i = 0, length = obj.length; i < length; i++) {
+                // call the function with the context and native-like arguments
+                callback.call(context, obj[i], i, obj);
+            }
+        }
+        // it's an object, use the keys
+        else {
+            // loop through all keys
+            for (var name in obj){
+                // call the function with context and native-like arguments
+                if (hasProp.call(obj, name)) {
+                    callback.call(context, obj[name], name, obj);
+                }
+            }
+        }
+    };
 
     var webview = $('#chat');
+    var appWindow = chrome.app.window.current();
+    
+    // keep track of messages that get notified
+    var messageCount = (function() {
+        var elem = $('title');
+        var defaultText = 'HipChat';
+        var count = 0;
+        
+        return function(val) {
+            if (typeof val === 'number') {
+                count = val || 0;
+                return (elem.innerHTML = (count) ? '(' + count + ') - ' + defaultText : defaultText);
+            }
+            
+            return count;
+        };
+    })();
+    var shouldNotify = true;
 
     // generate the absolute URL for the content script
     var fullUrl = chrome.runtime.getURL('script.js');
@@ -15,7 +64,7 @@ onload = function() {
     var code = '';
     var scriptDone = false;
     var loadDone = false;
-
+    
     // get the code from the content scrip as text
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
@@ -91,19 +140,68 @@ onload = function() {
         console.log(data);
 
         if (data.type && data.type === 'notification') {
-            var id = (Math.floor(Math.random() * 9007199254740992) + 1).toString();
-            
-            var opts = {
-                title: data.title || 'HipChat',
-                type: chrome.notifications.TemplateType.BASIC,
-                message: data.message,
-                priority: 0,
-                iconUrl: chrome.runtime.getURL('assets/128.png')
-            };
-
-            chrome.notifications.create(id, opts, function() {
-                console.log('notification callback', arguments);
-            });
+            notify(data);
         }
     });
+    
+    // send a notification
+    function notify(data) {
+        if (!shouldNotify) { return; }
+        
+        var id = (Math.floor(Math.random() * 9007199254740992) + 1).toString();
+            
+        var opts = {
+            title: data.title || 'HipChat',
+            type: chrome.notifications.TemplateType.BASIC,
+            message: data.message,
+            priority: 0,
+            iconUrl: chrome.runtime.getURL('assets/128.png')
+        };
+
+        chrome.notifications.create(id, opts, function() {
+            console.log('notification callback', arguments);
+        });
+        
+        messageCount( messageCount() + 1 );
+    }
+    
+    // detect when the window is active and inactive
+    window.onfocus = function onFocus(ev) {
+        console.log('focus', arguments);
+        shouldNotify = false;
+        
+        // clear existing notifications
+        messageCount(0);
+        chrome.notifications.getAll(function(nots) {
+            $.forEach(nots, function(val, key) {
+                chrome.notifications.clear(key);
+            });
+        });
+    };
+    
+    window.onblur = function onBlur(ev) {
+        console.log('blur', arguments);
+        shouldNotify = true;
+    };
+    
+    // detect when the machine is idle
+    // always send notifications when idle or locked, even if 
+    // the window is focused
+    chrome.idle.onStateChanged.addListener(function(state) {
+        switch (state) {
+            case chrome.idle.IdleState.ACTIVE:
+                console.log('is active');
+                break;
+            case chrome.idle.IdleState.IDLE:
+                console.log('is idle');
+                shouldNotify = true;
+                break;
+            case chrome.idle.IdleState.LOCKED:
+                console.log('is locked');
+                shouldNotify = true;
+                break;
+        }
+    });
+    // set state to idle after 60 seconds of inactivity
+    chrome.idle.setDetectionInterval(60);
 };
