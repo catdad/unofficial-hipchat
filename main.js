@@ -27,22 +27,15 @@ chrome.app.runtime.onRestarted.addListener(function() {
  */
 function runApp() {
     chrome.app.window.create('main.html', {
-        id: "browserWinID",
+        id: "hipChatWebview",
         innerBounds: {
             width: 1024,
             height: 768
         },
-        frame: {
-            type: "chrome",
-            color: '#fefefe'
-        }
-    }, function(appWindow) {
-        configureWindow(appWindow);
-    });
-}
-
-function configureWindow(appWindow) {
-    chrome.notifications.onClicked.addListener(function(notificationId) {
-        appWindow.show(true);
+        frame: "chrome",
+//        frame: {
+//            type: "chrome",
+//            color: '#fefefe'
+//        },
     });
 }

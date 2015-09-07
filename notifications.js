@@ -162,8 +162,15 @@ onload = function() {
             console.log('notification callback', arguments);
         });
         
+        // update the taskbar message count
         messageCount( messageCount() + 1 );
+        // make the taskbar icon flash orange
+        appWindow.drawAttention();
     }
+    
+    chrome.notifications.onClicked.addListener(function(notificationId) {
+        appWindow.show(true);
+    });
     
     // detect when the window is active and inactive
     window.onfocus = function onFocus(ev) {
