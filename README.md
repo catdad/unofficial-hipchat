@@ -28,3 +28,5 @@ Yes, please. Submit issues, PRs, etc.
 ###Note to Atlassian
 
 If you find this source code, it's yours. I only made this because I need a better client before I would consider using the HipChat service.
+
+[![Analytics](https://ga-beacon.appspot.com/UA-17159207-7/unofficial-hipchat/readme?flat)](https://github.com/igrigorik/ga-beacon)
