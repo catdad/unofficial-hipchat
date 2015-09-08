@@ -10,16 +10,16 @@ My company recently began using HipChat. However, the native desktop client for 
 
 As a developer, I cannot stand for this, and refuse to use such a bad application. Luckily, the web client is pretty decent. It just needs a little help. In this app, I am using the web client and wrapping it in a Chrome Packaged App, adding in some notification goodness.
 
-###Installation
-
-Download this repo and load it as an unpackaged app in Chrome.
-
 ###Building
 
 After installing Node, building is as easy as:
 
     npm install
     gulp
+    
+###Installation
+
+Download this repo and build it. Then, deploy the `build` folder as an unpackaged app in Chrome ([see step 2 here](https://support.google.com/chrome/a/answer/2714278)).
 
 ###Contributions
 
