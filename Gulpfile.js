@@ -26,8 +26,9 @@ var version = package.version + '.' + epoch;
 var BuildDest = './build';
 var JSSource = [
     './main.js',
-    './notifications.js',
-    './script.js'
+    './app.js',
+    './inject-xhr.js',
+    './inject-notifications.js'
 ];
 var HTMLSource = './*.html';
 var ManifestSource = './manifest.json';

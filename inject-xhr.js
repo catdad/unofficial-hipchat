@@ -1,5 +1,5 @@
-/* jshint browser: true */
-/* global Strophe, console */
+/* jshint browser: true, devel: true */
+/* global Strophe */
 
 // For some reason, a Chrome Packaged App, using executeScript, 
 // cannot access or make changes to the window object in the 
@@ -147,7 +147,7 @@ script.textContent = '!' + function() {
         }
     }
     
-} +  '()';
+} +  '();';
 
 // inject the script into the webview document
 (document.head || document.documentElement).appendChild(script);
