@@ -58,9 +58,11 @@ script.textContent = '!' + function() {
     /////////////////////////////////////////
     // Overload the Notification object
     /////////////////////////////////////////
+    
+    // just in case, save the original
     var OriginalNotification = window.Notification;
     
-    var NewNotification = function(title, options) {
+    var Notification = function(title, options) {
         options = options || {};
         
         var id = (Math.floor(Math.random() * 9007199254740992) + 1).toString();
@@ -112,22 +114,36 @@ script.textContent = '!' + function() {
         
         notify({
             title: title,
-            message: options.body
+            body: options.body
         });
     };
     
-    // static methods
-    NewNotification.permission = 'granted';
-    NewNotification.requestPermission = function requestPermission(callback) {
+    // static methods and members
+    Object.defineProperties(Notification, {
+        'permission': {
+            value: 'granted',
+            writable: false
+        }
+    });
+    Notification.requestPermission = function requestPermission(callback) {
+        console.log('notification permission request');
+        
         setTimeout(function(){
-            callback(NewNotification.permission);
+            callback(Notification.permission);
         }, 0);
     };
     
+    // use original request for permission
+//    Notification.requestPermission = OriginalNotification.requestPermission;
+    
     // instance methods
-    NewNotification.prototype.close = function close() { };
-    NewNotification.prototype.onclick = function onclick() { };
-    NewNotification.prototype.onerror = function onerror() { };
+    // TODO do I need to implement these?
+    Notification.prototype.close = function close() { };
+    Notification.prototype.onclick = function onclick() { };
+    Notification.prototype.onerror = function onerror() { };
+    
+    // overload the window notification with this new one
+    window.Notification = Notification;
     
 } + '();';
 

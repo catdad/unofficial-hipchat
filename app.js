@@ -58,8 +58,8 @@ onload = function() {
     var shouldNotify = true;
 
     // generate the absolute URL for the content script
-    var fullUrl = chrome.runtime.getURL('inject-xhr.js');
-//    var fullUrl = chrome.runtime.getURL('inject-notifications.js');
+//    var fullUrl = chrome.runtime.getURL('inject-xhr.js');
+    var fullUrl = chrome.runtime.getURL('inject-notifications.js');
 
     // some vars to save the state
     var code = '';
