@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Unofficial HipChat",
     "short_name": "HipChat",
-    "description": "A hipper HipChat client view.",
+    "description": "A hipper HipChat client.",
     "minimum_chrome_version": "42.0.0.0",
     "version": "1.0.0",
     "icons": {
