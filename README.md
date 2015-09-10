@@ -1,5 +1,7 @@
 # unofficial HipChat client
 
+Download from the [Chrome Webstore][1].
+
 ###Disclaimer
 
 This app is not associated with the real HipChat client or Atlassian in any way.
@@ -19,7 +21,9 @@ After installing Node, building is as easy as:
     
 ###Installation
 
-Download this repo and build it. Then, deploy the `build` folder as an unpackaged app in Chrome ([see step 2 here](https://support.google.com/chrome/a/answer/2714278)).
+Download from the [Chrome Webstore][1].
+
+You can download this repo and build it. Then, deploy the `build` folder as an unpackaged app in Chrome ([see step 2 here](https://support.google.com/chrome/a/answer/2714278)).
 
 ###Contributions
 
@@ -30,3 +34,5 @@ Yes, please. Submit issues, PRs, etc.
 If you find this source code, it's yours. I only made this because I need a better client before I would consider using the HipChat service.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-17159207-7/unofficial-hipchat/readme?flat)](https://github.com/igrigorik/ga-beacon)
+
+[1]: https://chrome.google.com/webstore/detail/lgdomahdfnkdhjfkennlfhagbjamalkb
