@@ -1,6 +1,9 @@
 /* jshint browser: true, devel: true */
 /* global analytics */
 
+// sample code from the Chrome PLatform Analytics GitHub example
+// https://github.com/GoogleChrome/chrome-platform-analytics
+
 (function() {
     var service, tracker;
     
@@ -13,19 +16,10 @@
 
         // Get a Tracker using your Google Analytics app Tracking ID.
         tracker = service.getTracker('UA-67424312-1');
-
-        // Start timing...
-        //var timing = tracker.startTiming('Analytics Performance', 'Send Event');
-
+        
         // Record an "appView" each time the user launches your app or goes to a new
         // screen within the app.
         tracker.sendAppView('HipChat');
-
-        // Record user actions with "sendEvent".
-        //tracker.sendEvent('Interesting Stuff', 'User Did Something');
-
-        // ...send elapsed time since we started timing.
-        //timing.send();
     }
     
     function initAnalyticsConfig(config) {
