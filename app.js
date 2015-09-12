@@ -129,10 +129,11 @@ onload = function() {
         });
 
         // catch all permision requests and allow them
-//        webview.addEventListener('permissionrequest', function(ev) {
-//            // allow all the things
-//            ev.request.allow();
-//        });
+        webview.addEventListener('permissionrequest', function(ev) {
+            if (ev.permission === 'media') {
+                ev.request.allow();
+            }
+        });
         
 //        webview.request.onCompleted.addListener(function(details) { 
 //            var bindAddr = 'https://likeabosh.hipchat.com/http-bind/';
