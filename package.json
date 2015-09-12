@@ -20,6 +20,7 @@
     "del": "^2.0.1",
     "gulp": "^3.9.0",
     "gulp-each": "^0.1.0",
+    "gulp-filter": "^3.0.1",
     "gulp-if": "^1.2.5",
     "gulp-strip-debug": "^1.0.2",
     "gulp-uglify": "^1.4.0",

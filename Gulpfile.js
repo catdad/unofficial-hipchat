@@ -5,6 +5,7 @@ var path = require('path').posix;
 var gulp = require('gulp');
 var del = require('del');
 var each = require('gulp-each');
+var filter = require('gulp-filter');
 var uglify = require('gulp-uglify');
 var stripdebug = require('gulp-strip-debug');
 var gulpif = require('gulp-if');
@@ -106,9 +107,13 @@ gulp.task('html', function() {
 });
 
 gulp.task('js', function() {
+    var analyticsFilter = filter('google-analytics-bundle.js', { restore: true });
+    
     return gulp.src(JSSource, { base: './' })
+        .pipe(analyticsFilter)
         .pipe(gulpif(production, stripdebug()))
         .pipe(gulpif(production, uglify()))
+        .pipe(analyticsFilter.restore)
         .pipe(gulp.dest(BuildDest));
 });
 
