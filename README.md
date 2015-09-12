@@ -1,6 +1,6 @@
 # unofficial HipChat client
 
-Download from the [Chrome Webstore][1].
+[![Chrome Webstore][2]][1]
 
 ###Disclaimer
 
@@ -36,3 +36,4 @@ If you find this source code, it's yours. I only made this because I need a bett
 [![Analytics](https://ga-beacon.appspot.com/UA-17159207-7/unofficial-hipchat/readme?flat)](https://github.com/igrigorik/ga-beacon)
 
 [1]: https://chrome.google.com/webstore/detail/lgdomahdfnkdhjfkennlfhagbjamalkb
+[2]: https://developer.chrome.com/webstore/images/ChromeWebStore_Badge_v2_206x58.png
