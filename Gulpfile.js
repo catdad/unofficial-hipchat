@@ -75,11 +75,13 @@ var JSSource = [
     './main.js',
     './app.js',
     './inject-xhr.js',
-    './inject-notifications.js'
+    './inject-notifications.js',
+    './analytics/**'
 ];
 var HTMLSource = './*.html';
 var ManifestSource = './manifest.json';
 var AssetsSource = './assets/**';
+var AnalyicsSource = './analytics/**';
 
 gulp.task('clean', function() {
     return del([ path.join(BuildDest, '**') ]);
@@ -104,7 +106,7 @@ gulp.task('html', function() {
 });
 
 gulp.task('js', function() {
-    return gulp.src(JSSource)
+    return gulp.src(JSSource, { base: './' })
         .pipe(gulpif(production, stripdebug()))
         .pipe(gulpif(production, uglify()))
         .pipe(gulp.dest(BuildDest));

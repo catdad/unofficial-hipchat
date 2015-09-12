@@ -1,5 +1,5 @@
-/* jshint browser: true */
-/* global chrome, console */
+/* jshint browser: true, devel: true */
+/* global chrome, analytics */
 
 onload = function() {
     // some utils
@@ -36,6 +36,15 @@ onload = function() {
             }
         }
     };
+    
+    function sendAnalytics(category, action) {
+        category = category || 'Default';
+        action = action || 'default';
+        
+        if (window.tracker && window.tracker.sendEvent) {
+            window.tracker.sendEvent(category, action);
+        }
+    }
 
     var webview = $('#chat');
     var appWindow = chrome.app.window.current();
@@ -93,6 +102,8 @@ onload = function() {
             // post the first message, to initialize message sending from the
             // guest webiew page
             webview.contentWindow.postMessage('thing', '*');
+            
+            sendAnalytics('Script', 'injected');
         });
     }
 
@@ -167,15 +178,20 @@ onload = function() {
         messageCount( messageCount() + 1 );
         // make the taskbar icon flash orange
         appWindow.drawAttention();
+        
+        // send interaction analytics
+        sendAnalytics('Notification', 'shown');
     }
     
     chrome.notifications.onClicked.addListener(function(notificationId) {
         appWindow.show(true);
+        
+        // send interaction analytics
+        sendAnalytics('Notification', 'clicked');
     });
     
     // detect when the window is active and inactive
     window.onfocus = function onFocus(ev) {
-        console.log('focus', arguments);
         shouldNotify = false;
         
         // clear existing notifications
@@ -185,11 +201,13 @@ onload = function() {
                 chrome.notifications.clear(key);
             });
         });
+        
+        sendAnalytics('State', 'focused');
     };
     
     window.onblur = function onBlur(ev) {
-        console.log('blur', arguments);
         shouldNotify = true;
+        sendAnalytics('State', 'blurred');
     };
     
     // detect when the machine is idle
@@ -199,14 +217,17 @@ onload = function() {
         switch (state) {
             case chrome.idle.IdleState.ACTIVE:
                 console.log('is active');
+                sendAnalytics('State', 'active');
                 break;
             case chrome.idle.IdleState.IDLE:
                 console.log('is idle');
                 shouldNotify = true;
+                sendAnalytics('State', 'idle');
                 break;
             case chrome.idle.IdleState.LOCKED:
                 console.log('is locked');
                 shouldNotify = true;
+                sendAnalytics('State', 'locked');
                 break;
         }
     });
