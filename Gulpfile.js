@@ -57,7 +57,7 @@ var calculateVersion = function(verStr) {
     var ver = new Version(verStr);
     var date = new Date();
     var year = date.getUTCFullYear().toString().substr(2);
-    var julian = getJulian(date);
+    var julian = pad(getJulian(date), 3);
     var hour = date.getUTCHours();
     var min = pad(date.getUTCMinutes(), 2);
     
