@@ -18,6 +18,7 @@
     },
     "permissions": [
         "background",
+        "clipboardWrite",
         "idle",
         "notifications",
         "storage",

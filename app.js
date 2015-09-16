@@ -125,7 +125,7 @@ onload = function() {
         // catch all attempts to open a link from the webview
         webview.addEventListener('newwindow', function(ev) {
             ev.preventDefault();
-            window.open(ev.targetUrl);
+            open(ev.targetUrl);
         });
 
         // catch all permision requests and allow them
@@ -133,6 +133,32 @@ onload = function() {
             if (ev.permission === 'media') {
                 ev.request.allow();
             }
+        });
+        
+        function linkOpen(ev) {
+            if (ev.linkUrl) {
+                open(ev.linkUrl);
+            }
+        }
+        function linkCopy(ev) {
+            if (ev.linkUrl) {
+                copy(ev.linkUrl);
+            }
+        }
+        
+        webview.contextMenus.create({
+            title: 'Open link in browser',
+            contexts: ['link'],
+            onclick: linkOpen
+        }, function() {
+            console.log('context menu added', arguments);
+        });
+        webview.contextMenus.create({
+            title: 'Copy link address',
+            contexts: ['link'],
+            onclick: linkCopy
+        }, function() {
+            console.log('context menu added', arguments);
         });
         
 //        webview.request.onCompleted.addListener(function(details) { 
@@ -182,6 +208,22 @@ onload = function() {
         
         // send interaction analytics
         sendAnalytics('Notification', 'shown');
+    }
+    
+    // copy data to clipboard
+    function copy(str) {
+        var input = document.createElement('textarea');
+        document.body.appendChild(input);
+        input.value = str;
+        input.focus();
+        input.select();
+        document.execCommand('Copy');
+        input.remove();
+    }
+    
+    // open a link in the browser
+    function open(url) {
+        window.open(url);
     }
     
     chrome.notifications.onClicked.addListener(function(notificationId) {
