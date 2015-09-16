@@ -1,4 +1,4 @@
-/* jshint browser: true, devel: true */
+/* jshint browser: true, devel: true, -W027 */
 /* global Strophe */
 
 // For some reason, a Chrome Packaged App, using executeScript, 
@@ -18,11 +18,11 @@ script.textContent = '!' + function() {
 
     // this is particularly an issue when the user has to sign in
     // before starting to use the app
-    if (window.__hipchatBootstrapConfiged__) {
+    if (window.__hipchatXHRConfiged__) {
         return;
     }
 
-    window.__hipchatBootstrapConfiged__ = true;
+    window.__hipchatXHRConfiged__ = true;
 
     /////////////////////////////////////////
     // Register messaging with the parent
@@ -76,11 +76,36 @@ script.textContent = '!' + function() {
             var originalOnReadyStateChange, xhr;
             xhr = originalXHRFactory.bind(this)();
             originalOnReadyStateChange = xhr.onreadystatechange;
+            
+//            xhr.setRequestHeader = (function (child) {
+//                return function(name, value, force) {
+//                    if (name.toLowerCase() === 'content-length' && force !== true) {
+//                        return;
+//                    }
+//                    
+//                    var args = [name, value];
+//                    
+//                    return XMLHttpRequest.prototype.setRequestHeader.apply(xhr, args);
+//                };
+//            })(this);
+            
             xhr.send = (function (child) {
                 return function () {
                     var e;
+                    
+                    console.log(arguments);
+                    var args = Array.prototype.slice.call(arguments);
+                    var body = args[0];
+                    
+                    var augmentedBody = parseBody(body);
+                    
+                    args[0] = augmentedBody.content;
+                    
+//                    xhr.setRequestHeader('content-length', augmentedBody.contentLength, true);
+                    
                     try {
-                        return XMLHttpRequest.prototype.send.apply(xhr, arguments);
+                        return XMLHttpRequest.prototype.send.apply(xhr, args);
+//                        return XMLHttpRequest.prototype.send.apply(xhr, arguments);
                     } catch (_error) {
                         e = _error;
                         return Strophe.log(Strophe.LogLevel.WARN, e.message);
@@ -104,10 +129,59 @@ script.textContent = '!' + function() {
     }
     attemptToOverloadStrophe();
     
+    function parseBody(body) {
+        var newXml = body;
+        
+        function returnObj() {
+            return {
+                content: newXml,
+                contentLength: newXml.length
+            };
+        }
+        
+        // never let this throw
+        try {
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(body, 'text/xml');
+
+            var message = xmlDoc.querySelector('message');
+            if (!message) { return returnObj(); }
+
+            var bodyEl = message.querySelector('body');
+            if (!bodyEl) { return returnObj(); }
+
+            // "May contain basic tags: a, b, i, strong, em, br, img, pre, code, lists, tables."
+            // https://www.hipchat.com/docs/api/method/rooms/message
+            
+            bodyEl.innerHTML = '&lt;b&gt;this is a test&lt;/b&gt;';
+
+            var html = xmlDoc.createElement('html');
+            html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
+            
+            var htmlBody = xmlDoc.createElement('body');
+            htmlBody.innerHTML = '<b>this is a test</b>';
+            htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+            
+            html.appendChild(htmlBody);
+            message.appendChild(html);
+            
+            var serializer = new XMLSerializer();
+            newXml = serializer.serializeToString(xmlDoc).trim();
+
+            console.log('parsed request body', body.length, newXml.length);
+
+            return returnObj();
+        } catch(e) {
+            // TODO send error to google analytics
+            return returnObj();
+        }
+    }
+    
     // parse responses from the jabber protocol
     //  This entire thing is a hack, as I did not event attempt to find
     //  out if there is a protocol here, and just guessed things.
     function parseHttpBindBody(body) {
+        return;
         
         // try/catch the whole thing
         try {
