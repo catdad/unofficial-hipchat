@@ -150,16 +150,12 @@ onload = function() {
             title: 'Open link in browser',
             contexts: ['link'],
             onclick: linkOpen
-        }, function() {
-            console.log('context menu added', arguments);
-        });
+        }, function() { });
         webview.contextMenus.create({
             title: 'Copy link address',
             contexts: ['link'],
             onclick: linkCopy
-        }, function() {
-            console.log('context menu added', arguments);
-        });
+        }, function() { });
         
 //        webview.request.onCompleted.addListener(function(details) { 
 //            var bindAddr = 'https://likeabosh.hipchat.com/http-bind/';
