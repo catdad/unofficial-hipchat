@@ -89,11 +89,49 @@ script.textContent = '!' + function() {
 //                };
 //            })(this);
             
+//            var rawOpen = xhr.open;
+//            xhr.open = (function (child) {
+//                function setupHook(req) {
+//                    
+//                    function getter() {
+//                        console.error('getting xhr response');
+//                        
+//                        delete req.responseText;
+//                        var ret = req.responseText;
+//                        setup();
+//                        return ret;
+//                    }
+//                    
+//                    function setter(val) {
+//                        console.log('setting xhr to:', val);
+//                    }
+//                    
+//                    function setup() {
+//                        console.log('config responseText');
+//                        Object.defineProperty(req, 'responseText', {
+//                            get: getter,
+//                            set: setter,
+//                            configurable: true
+//                        });
+//                    }
+//                }
+//                
+//                return function () {
+//                    if (!xhr._hooked) {
+//                        xhr._hooped = true;
+//                        console.log('setting up open');
+//                        setupHook(xhr);
+//                    }
+//                    
+//                    return rawOpen.apply(xhr, arguments);
+////                    return XMLHttpRequest.prototype.open.apply(xhr, arguments);
+//                };
+//            })(this);
+            
             xhr.send = (function (child) {
                 return function () {
                     var e;
                     
-                    console.log(arguments);
                     var args = Array.prototype.slice.call(arguments);
                     var body = args[0];
                     
@@ -112,22 +150,71 @@ script.textContent = '!' + function() {
                     }
                 };
             })(this);
+            
             xhr.onreadystatechange = function () {
                 if (this.readyState === 1 && !this.withCredentials) {
                     this.withCredentials = true;
                 }
                 
                 // when the request is done, attempt to parse it
-                if (this.readyState === 4 && this.responseURL === 'https://likeabosh.hipchat.com/http-bind/') {
-                    parseHttpBindBody(xhr.responseText);
-                }
+//                if (this.readyState === 4 && this.responseURL === 'https://likeabosh.hipchat.com/http-bind/') {
+//                    xhr.responseText = parseHttpBindBody(xhr.responseText);
+//                }
 
                 return originalOnReadyStateChange.apply(this, arguments);
             };
+            
             return xhr;
         };
     }
     attemptToOverloadStrophe();
+    
+    // overload response text retrieval
+    var accessorText = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, 'responseText');
+    Object.defineProperty(XMLHttpRequest.prototype, 'responseText', {
+        get: function() {
+            var resp = accessorText.get.call(this);
+            console.log('getting xhr text:', resp);
+            return resp;
+        },
+        set: function() {
+            console.log('setting xhr text');
+        },
+        configurable: true
+    });
+    
+    // overload response xml retrieval, because that exists apparently
+    var accessorXml = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, 'responseXML');
+    Object.defineProperty(XMLHttpRequest.prototype, 'responseXML', {
+        get: function() {
+            var resp = accessorXml.get.call(this);
+            var newResp;
+            
+            
+            try {
+                console.time('parse xml');
+                
+                // wait, how do you copy an XML object, again?
+                var xmlCopyStr = xmlToString(resp);
+                var xmlCopy = stringToXml(xmlCopyStr);
+                
+                newResp = formatResponseXml(xmlCopy);
+                
+                console.timeEnd('parse xml');
+            } catch(e) {
+                console.log(e);
+                newResp = resp;
+            }
+            
+            console.log('getting xhr xml:', newResp);
+            return newResp;
+        },
+        set: function() {
+            console.log('setting xhr xml');
+        },
+        configurable: true
+    });
+    
     
     function parseBody(body) {
         var newXml = body;
@@ -153,72 +240,166 @@ script.textContent = '!' + function() {
             // "May contain basic tags: a, b, i, strong, em, br, img, pre, code, lists, tables."
             // https://www.hipchat.com/docs/api/method/rooms/message
             
-            bodyEl.innerHTML = '&lt;b&gt;this is a test&lt;/b&gt;';
-
-            var html = xmlDoc.createElement('html');
-            html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
+//            var orig = bodyEl.innerHTML;
+//            bodyEl.innerHTML = '&lt;b&gt;this is a test&lt;/b&gt;';
+//            bodyEl.innerHTML = orig + 'a&#x0028;';
             
-            var htmlBody = xmlDoc.createElement('body');
-            htmlBody.innerHTML = '<b>this is a test</b>';
-            htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-            
-            html.appendChild(htmlBody);
-            message.appendChild(html);
+//            var html = xmlDoc.createElement('html');
+//            html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
+//            
+//            var htmlBody = xmlDoc.createElement('body');
+//            htmlBody.innerHTML = '<b>this is a test</b>';
+//            htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+//            
+//            html.appendChild(htmlBody);
+//            message.appendChild(html);
             
             var serializer = new XMLSerializer();
             newXml = serializer.serializeToString(xmlDoc).trim();
-
-            console.log('parsed request body', body.length, newXml.length);
+            
+//            var temp = newXml.replace(/(?:<body>)[^<]{0,}(?!=<\/body>)/, function(v) { 
+//                var tag = v.slice(0,6); 
+//                var cont = v.slice(6);
+//                
+//                return tag + cont + '&#x007F;';
+//            });
+//
+//            newXml = temp;
+            
+            var bold = '*';
+            var boldChar = '\u0080';
+            var boldXml = '&#x0080;';
+            
+            var italic = '_';
+            var italicChar = '\0081';
+            var italicXml = '&#x0081;';
+            
+            newXml = newXml.replace(/\*/g, '&#x034F;');
+//                           .replace(/\_/g, italicXml);
+            
+//            console.log('parsed request body', body.length, newXml.length);
 
             return returnObj();
         } catch(e) {
             // TODO send error to google analytics
+            console.log(e);
             return returnObj();
         }
     }
     
-    // parse responses from the jabber protocol
-    //  This entire thing is a hack, as I did not event attempt to find
-    //  out if there is a protocol here, and just guessed things.
-    function parseHttpBindBody(body) {
-        return;
-        
-        // try/catch the whole thing
-        try {
-        
-            var parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(body, 'text/xml');
-            
-            // attempt to find a message, and return if no message is found
-            var message = xmlDoc.querySelector('message');
-            if (!message) { return; }
-            
-            console.log(xmlDoc);
-            
-            // if there is an id assigned to the message, we can assume that it
-            // is a message sent by this app, and it should be ignored
-            var id = message.getAttribute('id');
-            if (id !== undefined && id !== null) { return; }
-            
-            // check for a delay element inside the message
-            // this suggests a re-broadcast, so we want to ignore it
-            var delay = message.querySelector('delay');
-            if (delay) { return; }
-            
-            console.log(message);
+    function stringToXml(str) {
+        var parser = new DOMParser();
+        var xmlDoc = parser.parseFromString(str, 'text/xml');
+        return xmlDoc;
+    }
+    
+    function xmlToString(xml) {
+        var serializer = new XMLSerializer();
+        var str = serializer.serializeToString(xml).trim();
+        return str;
+    }
+    
+    function formatResponseText(str) {
+        var xml = stringToXml(str);
+        var newXml = formatResponseXml(xml);
+        return xmlToString(newXml);
+    }
+    
+    function formatResponseXml(xml) {
+        var messages = xml.querySelectorAll('message');
+        if (!(messages && messages.length)) { return xml; }
 
-            var from = message.getAttribute('from').split('/').pop();
-            // assume the first child is the body
-            // TODO this is probably not good
-            var msgBody = message.firstChild.innerHTML;
+        var messagesArr = Array.prototype.slice.call(messages);
+        messagesArr.forEach(function(message) {
+            var newMessage = formatMessage(message, xml);
+            
+            if (message !== newMessage) {
+                message.parentElement.replaceChild(newMessage, message);
+            }
+        });
+        
+        return xml;
+    }
+    
+    function formatMessage(message, xmlDoc) {
+        var body = message.querySelector('body');
+        if (!body || body.getAttribute('xmlns')) { return message; }
 
-            notify({
-                title: from,
-                body: msgBody
-            });
-        } catch(e) {
-            console.log('ERROR: ' + e.message);
-        }
+        var bodyStr = body.innerHTML;
+        var newBodyStr = formatString(bodyStr);
+        body.innerHTML = bodyStr;
+        
+        var orig = body.innerHTML;
+//        body.innerHTML = '<b>' + orig + '</b>';
+        body.innerHTML = '&lt;b&gt;' + orig + '&lt;/b&gt;';
+        
+//        body.parentElement.removeChild(body);
+        
+        
+        
+//    <x xmlns="http://hipchat.com/protocol/muc#room">
+//        <type>system</type>
+//        <notify>0</notify>
+//        <color>green</color>
+//        <message_format>html</message_format>
+//    </x>
+        
+        var x = xmlDoc.createElement('x');
+        x.setAttribute('xmlns', "http://hipchat.com/protocol/muc#room");
+        
+        var type = xmlDoc.createElement('type');
+        type.innerHTML = 'system';
+        
+        var notify = xmlDoc.createElement('notify');
+        notify.innerHTML = '1';
+        
+        var color = xmlDoc.createElement('color');
+        color.innerHTML = 'green';
+        
+        var messageFormat = xmlDoc.createElement('message_format');
+        messageFormat.innerHTML = 'html';
+        
+        x.appendChild(type);
+        x.appendChild(notify);
+        x.appendChild(color);
+        x.appendChild(messageFormat);
+        
+        message.appendChild(x);
+        
+        
+        
+
+        var html = xmlDoc.createElement('html');
+        html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
+
+        var htmlBody = xmlDoc.createElement('body');
+        htmlBody.innerHTML = '<strong>' + orig + ' - extra text</strong>';
+        htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+
+        html.appendChild(htmlBody);
+        message.appendChild(html);
+        
+        return message;
+    }
+    
+    function formatString(str) {
+        var hasBold = /\u034F/.test(str);
+        var hasItalic = /\u0081/.test(str);
+        
+        var c = 0;
+        var newBody = str.replace(/\u034F/g, function(v) {
+            return 'a';
+            
+//            if (c%2) {
+//                return '</b>';
+//            } else {
+//                return '<b>';
+//            }
+        });
+        
+        console.log('has bold:', hasBold);
+        
+        return newBody;
     }
     
 } +  '();';
