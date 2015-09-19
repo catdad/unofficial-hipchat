@@ -196,8 +196,6 @@ script.textContent = '!' + function() {
             var bodyEl = message.querySelector('body');
             if (!bodyEl) { return returnObj(); }
 
-            // "May contain basic tags: a, b, i, strong, em, br, img, pre, code, lists, tables."
-            // https://www.hipchat.com/docs/api/method/rooms/message
             
 //            var orig = bodyEl.innerHTML;
 //            bodyEl.innerHTML = '&lt;b&gt;this is a test&lt;/b&gt;';
@@ -258,6 +256,8 @@ script.textContent = '!' + function() {
         return str;
     }
     
+    // "May contain basic tags: a, b, i, strong, em, br, img, pre, code, lists, tables."
+    // https://www.hipchat.com/docs/api/method/rooms/message        
     var formatter = {
         openCaret: '&lt;',
         closeCaret: '&gt;',
@@ -271,7 +271,7 @@ script.textContent = '!' + function() {
             return formatter.tag('strong', str);    
         },
         italic: function(str) {
-            return formatter.tab('i', str);
+            return formatter.tag('em', str);
         },
         code: function(str) {
             return formatter.tag('code', str);
