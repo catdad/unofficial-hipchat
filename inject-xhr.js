@@ -77,57 +77,6 @@ script.textContent = '!' + function() {
             xhr = originalXHRFactory.bind(this)();
             originalOnReadyStateChange = xhr.onreadystatechange;
             
-//            xhr.setRequestHeader = (function (child) {
-//                return function(name, value, force) {
-//                    if (name.toLowerCase() === 'content-length' && force !== true) {
-//                        return;
-//                    }
-//                    
-//                    var args = [name, value];
-//                    
-//                    return XMLHttpRequest.prototype.setRequestHeader.apply(xhr, args);
-//                };
-//            })(this);
-            
-//            var rawOpen = xhr.open;
-//            xhr.open = (function (child) {
-//                function setupHook(req) {
-//                    
-//                    function getter() {
-//                        console.error('getting xhr response');
-//                        
-//                        delete req.responseText;
-//                        var ret = req.responseText;
-//                        setup();
-//                        return ret;
-//                    }
-//                    
-//                    function setter(val) {
-//                        console.log('setting xhr to:', val);
-//                    }
-//                    
-//                    function setup() {
-//                        console.log('config responseText');
-//                        Object.defineProperty(req, 'responseText', {
-//                            get: getter,
-//                            set: setter,
-//                            configurable: true
-//                        });
-//                    }
-//                }
-//                
-//                return function () {
-//                    if (!xhr._hooked) {
-//                        xhr._hooped = true;
-//                        console.log('setting up open');
-//                        setupHook(xhr);
-//                    }
-//                    
-//                    return rawOpen.apply(xhr, arguments);
-////                    return XMLHttpRequest.prototype.open.apply(xhr, arguments);
-//                };
-//            })(this);
-            
             xhr.send = (function (child) {
                 return function () {
                     var e;
@@ -138,8 +87,6 @@ script.textContent = '!' + function() {
                     var augmentedBody = parseBody(body);
                     
                     args[0] = augmentedBody.content;
-                    
-//                    xhr.setRequestHeader('content-length', augmentedBody.contentLength, true);
                     
                     try {
                         return XMLHttpRequest.prototype.send.apply(xhr, args);
@@ -215,6 +162,18 @@ script.textContent = '!' + function() {
         configurable: true
     });
     
+    // lookup table of formatting characters
+    // Note: regex format, where _ is the hidden character
+    //   /\s_[^_]*_\s/g
+    var chars = {};
+    chars.bold = {
+        xml: '&#x034F;',
+        js: '\u034f',
+        regex: /\s\u034f[^\u034f]*\u034f\s/g
+    };
+    chars.link = {
+        regex: /([a-zA-Z0-9]{0,}:?\/\/)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+    };
     
     function parseBody(body) {
         var newXml = body;
@@ -274,7 +233,7 @@ script.textContent = '!' + function() {
             var italicChar = '\0081';
             var italicXml = '&#x0081;';
             
-            newXml = newXml.replace(/\*/g, '&#x034F;');
+            newXml = newXml.replace(/\*/g, chars.bold.xml);
 //                           .replace(/\_/g, italicXml);
             
 //            console.log('parsed request body', body.length, newXml.length);
@@ -298,6 +257,41 @@ script.textContent = '!' + function() {
         var str = serializer.serializeToString(xml).trim();
         return str;
     }
+    
+    var formatter = {
+        openCaret: '&lt;',
+        closeCaret: '&gt;',
+        openTag: function(name) {
+            return formatter.openCaret + name + formatter.closeCaret;
+        },
+        closeTag: function(name) {
+            return formatter.openCaret + '/' + name + formatter.closeCaret;
+        },
+        bold: function(str) {
+            return formatter.tag('strong', str);    
+        },
+        italic: function(str) {
+            return formatter.tab('i', str);
+        },
+        code: function(str) {
+            return formatter.tag('code', str);
+        },
+        link: function(str) {
+            var link = str;
+            if (!(/:\/\//.test(link))) {
+                link = '//' + str;
+            }
+            
+            return (
+                formatter.openCaret + 'a href="' + link + '" target="_blank" ' + formatter.closeCaret + 
+                    str + 
+                formatter.closeTag('a')
+            );
+        },
+        tag: function(name, str) {
+            return formatter.openTag(name) + str + formatter.closeTag(name); 
+        }
+    };
     
     function formatResponseText(str) {
         var xml = stringToXml(str);
@@ -324,16 +318,18 @@ script.textContent = '!' + function() {
     function formatMessage(message, xmlDoc) {
         var body = message.querySelector('body');
         if (!body || body.getAttribute('xmlns')) { return message; }
-
-        var bodyStr = body.innerHTML;
-        var newBodyStr = formatString(bodyStr);
-        body.innerHTML = bodyStr;
         
         var orig = body.innerHTML;
-//        body.innerHTML = '<b>' + orig + '</b>';
-        body.innerHTML = '&lt;b&gt;' + orig + '&lt;/b&gt;';
+        var formatted = orig.replace(chars.bold.regex, function(val) {
+            return formatter.bold(val);
+        }).replace(chars.link.regex, function(val) {
+            return formatter.link(val);
+        });
         
-//        body.parentElement.removeChild(body);
+        // check if any formatting was applied
+//        if (orig === formatted) { return message; }
+        
+        body.innerHTML = formatted;
         
         
         
@@ -347,59 +343,40 @@ script.textContent = '!' + function() {
         var x = xmlDoc.createElement('x');
         x.setAttribute('xmlns', "http://hipchat.com/protocol/muc#room");
         
-        var type = xmlDoc.createElement('type');
-        type.innerHTML = 'system';
+//        var type = xmlDoc.createElement('type');
+//        type.innerHTML = 'system';
+//        
+//        var notify = xmlDoc.createElement('notify');
+//        notify.innerHTML = '1';
+//        
+//        var color = xmlDoc.createElement('color');
+//        color.innerHTML = 'gray';
+//        
         
-        var notify = xmlDoc.createElement('notify');
-        notify.innerHTML = '1';
-        
-        var color = xmlDoc.createElement('color');
-        color.innerHTML = 'green';
-        
+        // only the message format it required to switch to HTML, yay!
         var messageFormat = xmlDoc.createElement('message_format');
         messageFormat.innerHTML = 'html';
         
-        x.appendChild(type);
-        x.appendChild(notify);
-        x.appendChild(color);
+//        x.appendChild(type);
+//        x.appendChild(notify);
+//        x.appendChild(color);
         x.appendChild(messageFormat);
         
         message.appendChild(x);
-        
-        
         
 
         var html = xmlDoc.createElement('html');
         html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
 
         var htmlBody = xmlDoc.createElement('body');
-        htmlBody.innerHTML = '<strong>' + orig + ' - extra text</strong>';
+        // TODO make this correct HTML, even though HipChat doesn't use it
+        htmlBody.innerHTML = orig;
         htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 
         html.appendChild(htmlBody);
         message.appendChild(html);
         
         return message;
-    }
-    
-    function formatString(str) {
-        var hasBold = /\u034F/.test(str);
-        var hasItalic = /\u0081/.test(str);
-        
-        var c = 0;
-        var newBody = str.replace(/\u034F/g, function(v) {
-            return 'a';
-            
-//            if (c%2) {
-//                return '</b>';
-//            } else {
-//                return '<b>';
-//            }
-        });
-        
-        console.log('has bold:', hasBold);
-        
-        return newBody;
     }
     
 } +  '();';
