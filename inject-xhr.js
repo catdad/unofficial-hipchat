@@ -138,15 +138,11 @@ script.textContent = '!' + function() {
             
             
             try {
-//                console.time('parse xml');
-                
                 // wait, how do you copy an XML object, again?
                 var xmlCopyStr = xmlToString(resp);
                 var xmlCopy = stringToXml(xmlCopyStr);
                 
                 newResp = formatResponseXml(xmlCopy);
-                
-//                console.timeEnd('parse xml');
             } catch(e) {
                 console.log(e);
                 newResp = resp;
