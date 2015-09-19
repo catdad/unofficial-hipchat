@@ -84,7 +84,7 @@ script.textContent = '!' + function() {
                     var args = Array.prototype.slice.call(arguments);
                     var body = args[0];
                     
-                    var augmentedBody = parseBody(body);
+                    var augmentedBody = encodeFormattingForUpload(body);
                     
                     args[0] = augmentedBody.content;
                     
@@ -121,11 +121,10 @@ script.textContent = '!' + function() {
     Object.defineProperty(XMLHttpRequest.prototype, 'responseText', {
         get: function() {
             var resp = accessorText.get.call(this);
-            console.log('getting xhr text:', resp);
             return resp;
         },
         set: function() {
-            console.log('setting xhr text');
+//            console.log('setting xhr text');
         },
         configurable: true
     });
@@ -139,7 +138,7 @@ script.textContent = '!' + function() {
             
             
             try {
-                console.time('parse xml');
+//                console.time('parse xml');
                 
                 // wait, how do you copy an XML object, again?
                 var xmlCopyStr = xmlToString(resp);
@@ -147,35 +146,109 @@ script.textContent = '!' + function() {
                 
                 newResp = formatResponseXml(xmlCopy);
                 
-                console.timeEnd('parse xml');
+//                console.timeEnd('parse xml');
             } catch(e) {
                 console.log(e);
                 newResp = resp;
             }
             
-            console.log('getting xhr xml:', newResp);
+//            console.log('getting xhr xml:', newResp);
             return newResp;
         },
         set: function() {
-            console.log('setting xhr xml');
+//            console.log('setting xhr xml');
         },
         configurable: true
     });
     
     // lookup table of formatting characters
     // Note: regex format, where _ is the hidden character
-    //   /\s_[^_]*_\s/g
-    var chars = {};
-    chars.bold = {
-        xml: '&#x034F;',
-        js: '\u034f',
-        regex: /\s\u034f[^\u034f]*\u034f\s/g
+    //   /(?:^|\s)_[^_]*_(?:\s|$)/g
+    var chars = {
+        replaceAt: function(str, idx, newText) {
+            return str.substr(0, idx) + newText + str.substr(idx + 1);
+        },
+        applyStyle: function(str, regex, fromChar, toChar) {
+            
+            var newStr = str.replace(regex, function(val) {
+                var firstIsWS = /\s/.test(val.charAt(0));
+                var lastIsWS = /\s/.test(val.charAt(val.length - 1));
+
+                var temp = val.trim();
+                
+                var first = temp.indexOf(fromChar);
+                var last = temp.lastIndexOf(fromChar);
+                
+                temp = chars.replaceAt(temp, 0, toChar);
+                temp = chars.replaceAt(temp, temp.length - 1, toChar);
+                
+                var res = (firstIsWS ? val.charAt(0) : '') + 
+                    temp + 
+                   (lastIsWS ? val.charAt(val.length - 1) : '');
+                
+                return res;
+            });
+            
+            return newStr;            
+        }
     };
+    chars.bold = {
+        // zero width space
+        char: '*',
+        xml: '&#x200b;',
+        js: '\u200b',
+        regex: /(?:^|\s)\u200b[^\u200b]*\u200b(?:\s|$)/g,
+        test: /\u200b/,
+        applyStyle: function(str) {
+            var regexp = /(^|\s)\*[^*]*\*(\s|$)/g;
+            return chars.applyStyle(str, regexp, chars.bold.char, chars.bold.js);
+        },
+        parseStyle: function(str) {
+            return str.replace(chars.bold.regex, function(val) {
+                return formatter.bold(val);
+            });
+        }
+    };
+    chars.italic = {
+        // zero width non-joiner
+        char: '_',
+        xml: '&#x200c;',
+        js: '\u200c',
+        regex: /(?:^|\s)\u200c[^\u200c]*\u200c(?:\s|$)/g,
+        test: /\u200c/,
+        applyStyle: function(str) {
+            var regexp = /(^|\s)_[^_]*_(\s|$)/g;
+            return chars.applyStyle(str, regexp, chars.italic.char, chars.italic.js);
+        },
+        parseStyle: function(str) {
+            return str.replace(chars.italic.regex, function(val) {
+                return formatter.italic(val);
+            });
+        }
+    };
+    chars.code = {
+        // zero width joiner
+        char: '`',
+        xml: '&#x200d;',
+        js: '\u200d',
+        regex: /(?:^|\s)\u200d[^\u200d]*\u200d(?:\s|$)/g,
+        test: /\u200d/,
+        applyStyle: function(str) {
+            var regexp = /(^|\s)`[^`]*`(\s|$)/g;
+            return chars.applyStyle(str, regexp, chars.code.char, chars.code.js);
+        },
+        parseStyle: function(str) {
+            return str.replace(chars.code.regex, function(val) {
+                return formatter.code(val);
+            });
+        }
+    };
+    // when formatting to an HTML message, links needs to also be parsed
     chars.link = {
         regex: /([a-zA-Z0-9]{0,}:?\/\/)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
     };
     
-    function parseBody(body) {
+    function encodeFormattingForUpload(body) {
         var newXml = body;
         
         function returnObj() {
@@ -196,23 +269,19 @@ script.textContent = '!' + function() {
             var bodyEl = message.querySelector('body');
             if (!bodyEl) { return returnObj(); }
 
+            var orig = bodyEl.innerHTML;
             
-//            var orig = bodyEl.innerHTML;
-//            bodyEl.innerHTML = '&lt;b&gt;this is a test&lt;/b&gt;';
-//            bodyEl.innerHTML = orig + 'a&#x0028;';
+            var newText = orig;
+            newText = chars.italic.applyStyle(newText);
+            newText = chars.bold.applyStyle(newText);
+            newText = chars.code.applyStyle(newText);
             
-//            var html = xmlDoc.createElement('html');
-//            html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
-//            
-//            var htmlBody = xmlDoc.createElement('body');
-//            htmlBody.innerHTML = '<b>this is a test</b>';
-//            htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-//            
-//            html.appendChild(htmlBody);
-//            message.appendChild(html);
+            if (orig !== newText) {
+                bodyEl.innerHTML = newText;
+            }
             
-            var serializer = new XMLSerializer();
-            newXml = serializer.serializeToString(xmlDoc).trim();
+            newXml = xmlToString(xmlDoc);
+            
             
 //            var temp = newXml.replace(/(?:<body>)[^<]{0,}(?!=<\/body>)/, function(v) { 
 //                var tag = v.slice(0,6); 
@@ -223,19 +292,10 @@ script.textContent = '!' + function() {
 //
 //            newXml = temp;
             
-            var bold = '*';
-            var boldChar = '\u0080';
-            var boldXml = '&#x0080;';
             
-            var italic = '_';
-            var italicChar = '\0081';
-            var italicXml = '&#x0081;';
-            
-            newXml = newXml.replace(/\*/g, chars.bold.xml);
+//            newXml = newXml.replace(/\*/g, chars.bold.xml);
 //                           .replace(/\_/g, italicXml);
             
-//            console.log('parsed request body', body.length, newXml.length);
-
             return returnObj();
         } catch(e) {
             // TODO send error to google analytics
@@ -320,18 +380,33 @@ script.textContent = '!' + function() {
         if (!body || body.getAttribute('xmlns')) { return message; }
         
         var orig = body.innerHTML;
-        var formatted = orig.replace(chars.bold.regex, function(val) {
-            return formatter.bold(val);
-        }).replace(chars.link.regex, function(val) {
+        
+        var hasBold = chars.bold.test.test(orig);
+        var hasItalic = chars.italic.test.test(orig);
+        var hasCode = chars.code.test.test(orig);
+        
+        // if no formatting exist, return the original message
+        if (!hasBold && !hasItalic && !hasCode) {
+            return message;
+        }
+        
+        // parse for formatting
+        var formatted = orig;
+        formatted = chars.bold.parseStyle(formatted);
+        formatted = chars.italic.parseStyle(formatted);
+        formatted = chars.code.parseStyle(formatted);
+        
+        // check if any formatting was applied
+        // it's technically possile that a single hidden char exists
+        if (orig === formatted) { return message; }
+        
+        // if we choose to format, we need to parse for URLs as well
+        formatted = formatted.replace(chars.link.regex, function(val) {
             return formatter.link(val);
         });
         
-        // check if any formatting was applied
-//        if (orig === formatted) { return message; }
-        
         body.innerHTML = formatted;
-        
-        
+        console.log('got formatted message', formatted);
         
 //    <x xmlns="http://hipchat.com/protocol/muc#room">
 //        <type>system</type>
@@ -364,12 +439,11 @@ script.textContent = '!' + function() {
         
         message.appendChild(x);
         
-
+        // TODO make this correct HTML, even though HipChat doesn't use it currently
         var html = xmlDoc.createElement('html');
         html.setAttribute('xmlns', 'http://jabber.org/protocol/xhtml-im');
 
         var htmlBody = xmlDoc.createElement('body');
-        // TODO make this correct HTML, even though HipChat doesn't use it
         htmlBody.innerHTML = orig;
         htmlBody.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 
