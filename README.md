@@ -1,6 +1,7 @@
-# ![icon][3] unofficial HipChat client
+# unofficial HipChat client
 
 [![Chrome Webstore][2]][1]
+[<img width="64px" height="64px" src="https://raw.githubusercontent.com/catdad/unofficial-hipchat/master/assets/128.png" />][1]
 
 ###Disclaimer
 
@@ -39,5 +40,5 @@ If you find this source code, it's yours. I only made this because I need a bett
 
 [1]: https://chrome.google.com/webstore/detail/lgdomahdfnkdhjfkennlfhagbjamalkb
 [2]: https://developer.chrome.com/webstore/images/ChromeWebStore_Badge_v2_206x58.png
-[3]: https://raw.githubusercontent.com/catdad/unofficial-hipchat/master/assets/32.png
+[3]: https://raw.githubusercontent.com/catdad/unofficial-hipchat/master/assets/128.png
 [4]: https://raw.githubusercontent.com/catdad/unofficial-hipchat/master/art/1280x800.png

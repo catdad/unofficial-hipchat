@@ -76,6 +76,7 @@ var JSSource = [
     './main.js',
     './app.js',
 //    './inject-xhr.js',
+//    './inject-options.js',
     './inject-notifications.js',
     './analytics/**'
 ];
