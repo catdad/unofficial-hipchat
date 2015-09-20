@@ -345,7 +345,23 @@ script.textContent = '!' + function() {
             );
         },
         tag: function(name, str) {
-            return formatter.openTag(name) + str + formatter.closeTag(name); 
+            var val = str;
+            
+            var firstIsWS = /\s/.test(val.charAt(0));
+            var lastIsWS = /\s/.test(val.charAt(val.length - 1));
+
+            var temp = val.trim();
+
+            temp = formatter.openTag(name) + temp + formatter.closeTag(name);
+            
+            var res = (firstIsWS ? val.charAt(0) : '') + 
+                temp + 
+               (lastIsWS ? val.charAt(val.length - 1) : '');
+
+            return res;
+            
+            
+//            return formatter.openTag(name) + str + formatter.closeTag(name); 
         }
     };
     
@@ -453,3 +469,16 @@ script.textContent = '!' + function() {
 
 // inject the script into the webview document
 (document.head || document.documentElement).appendChild(script);
+
+// css: 
+//.hc-chat-message code, code {
+//    font-family: monospace;
+//    background-color: rgba(204,202,202,0.46);
+//    padding: .05em .2em;
+//    border: 1px solid rgba(128,128,128,0.48);
+//    border-radius: 2px;
+//    font-size: .84rem;
+//    line-height: 1.6;
+//    vertical-align: bottom;
+//}
+
