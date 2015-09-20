@@ -22,6 +22,8 @@ script.textContent = '!' + function() {
     }
 
     window.__hipchatBootstrapConfiged__ = true;
+    
+    console.log('EMBEDDING NOTIFICATION');
 
     /////////////////////////////////////////
     // Register messaging with the parent

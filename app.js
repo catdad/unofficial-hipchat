@@ -67,29 +67,48 @@ onload = function() {
     var shouldNotify = true;
 
     // generate the absolute URL for the content script
-//    var fullUrl = chrome.runtime.getURL('inject-xhr.js');
-    var fullUrl = chrome.runtime.getURL('inject-notifications.js');
-
+    var scripts = [
+        chrome.runtime.getURL('inject-notifications.js'),
+        chrome.runtime.getURL('inject-xhr.js')
+    ];
+    
+    // simple get request
+    var get = function(url, callback) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                // generate executable code
+                callback(undefined, xmlHttp.responseText + '\n');
+            }
+        };
+        xmlHttp.open("GET", url, true); // true for asynchronous
+        xmlHttp.send(null);
+    };
+    
     // some vars to save the state
     var code = '';
+    var scriptsCode = [];
     var scriptDone = false;
     var loadDone = false;
     
-    // get the code from the content scrip as text
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            // generate executable code
-            code = '!function(){\n ' +
-                    xmlHttp.responseText + '\n' +
-                   '}(window); \n';
+    // get the code from the content scrips as text,
+    // and inject all of it... order doesn't matter here
+    scripts.forEach(function(url) {
+        get(url, function(err, content) {
+            scriptsCode.push('!function(){\n ' +
+                        content + '\n' +
+                       '}(window); \n');
             
-            scriptDone = true;
-            loadCode();
-        }
-    };
-    xmlHttp.open("GET", fullUrl, true); // true for asynchronous
-    xmlHttp.send(null);
+            if (scriptsCode.length === scripts.length) {
+                code = '!function(){\n ' +
+                        scriptsCode.join('\n') + '\n' +
+                       '}(window); \n';
+                
+                scriptDone = true;
+                loadCode();
+            }
+        });
+    });
 
     // savely embed the code; this will wait for us to have the code, and for
     // the page to finish loading before injecting the code

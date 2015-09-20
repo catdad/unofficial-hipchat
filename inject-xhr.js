@@ -23,6 +23,8 @@ script.textContent = '!' + function() {
     }
 
     window.__hipchatXHRConfiged__ = true;
+    
+    console.log('EMBEDDING XHR');
 
     /////////////////////////////////////////
     // Register messaging with the parent
