@@ -68,8 +68,9 @@ onload = function() {
 
     // generate the absolute URL for the content script
     var scripts = [
+//        chrome.runtime.getURL('inject-options.js'),
         chrome.runtime.getURL('inject-notifications.js'),
-        chrome.runtime.getURL('inject-xhr.js')
+//        chrome.runtime.getURL('inject-xhr.js')
     ];
     
     // simple get request
@@ -109,7 +110,7 @@ onload = function() {
             }
         });
     });
-
+    
     // savely embed the code; this will wait for us to have the code, and for
     // the page to finish loading before injecting the code
     function loadCode() {
