@@ -277,21 +277,7 @@ script.textContent = '!' + function() {
             }
             
             newXml = xmlToString(xmlDoc);
-            
-            
-//            var temp = newXml.replace(/(?:<body>)[^<]{0,}(?!=<\/body>)/, function(v) { 
-//                var tag = v.slice(0,6); 
-//                var cont = v.slice(6);
-//                
-//                return tag + cont + '&#x007F;';
-//            });
-//
-//            newXml = temp;
-            
-            
-//            newXml = newXml.replace(/\*/g, chars.bold.xml);
-//                           .replace(/\_/g, italicXml);
-            
+
             return returnObj();
         } catch(e) {
             // TODO send error to google analytics

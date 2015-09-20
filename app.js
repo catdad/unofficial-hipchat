@@ -70,7 +70,7 @@ onload = function() {
     var scripts = [
 //        chrome.runtime.getURL('inject-options.js'),
         chrome.runtime.getURL('inject-notifications.js'),
-//        chrome.runtime.getURL('inject-xhr.js')
+        chrome.runtime.getURL('inject-xhr.js')
     ];
     
     // simple get request
