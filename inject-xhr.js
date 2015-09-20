@@ -18,11 +18,11 @@ script.textContent = '!' + function() {
 
     // this is particularly an issue when the user has to sign in
     // before starting to use the app
-    if (window.__hipchatXHRConfiged__) {
+    if (window.__hipchatXhrBootstrap__) {
         return;
     }
 
-    window.__hipchatXHRConfiged__ = true;
+    window.__hipchatXhrBootstrap__ = true;
     
     console.log('EMBEDDING XHR');
 
@@ -138,7 +138,6 @@ script.textContent = '!' + function() {
             var resp = accessorXml.get.call(this);
             var newResp;
             
-            
             try {
                 // wait, how do you copy an XML object, again?
                 var xmlCopyStr = xmlToString(resp);
@@ -150,7 +149,6 @@ script.textContent = '!' + function() {
                 newResp = resp;
             }
             
-//            console.log('getting xhr xml:', newResp);
             return newResp;
         },
         set: function() {

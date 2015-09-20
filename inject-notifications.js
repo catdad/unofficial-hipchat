@@ -17,11 +17,11 @@ script.textContent = '!' + function() {
 
     // this is particularly an issue when the user has to sign in
     // before starting to use the app
-    if (window.__hipchatBootstrapConfiged__) {
+    if (window.__hipchatNotificationBootstrap__) {
         return;
     }
 
-    window.__hipchatBootstrapConfiged__ = true;
+    window.__hipchatNotificationBootstrap__ = true;
     
     console.log('EMBEDDING NOTIFICATION');
 
