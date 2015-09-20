@@ -160,6 +160,10 @@ script.textContent = '!' + function() {
     // lookup table of formatting characters
     // Note: regex format, where _ is the hidden character
     //   /(?:^|\s)_[^_]*_(?:\s|$)/g
+    
+    // TODO use this instead: (?:(_{1}))([^_\n]+[^_\s])\1
+    // https://github.com/SimonWaldherr/micromarkdown.js/blob/master/micromarkdown.js
+    
     var chars = {
         replaceAt: function(str, idx, newText) {
             return str.substr(0, idx) + newText + str.substr(idx + 1);
