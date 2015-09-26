@@ -19,7 +19,7 @@
         
         // Record the user's dpi scaling (dpr), because I am curious
         var dimensionValue = window.devicePixelRatio || 1;
-        tracker.set('dimension1', dimensionValue);
+        tracker.set('dimension1', dimensionValue.toString());
         
         // Record an "appView" each time the user launches your app or goes to a new
         // screen within the app.

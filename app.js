@@ -49,6 +49,21 @@ onload = function() {
     var webview = $('#chat');
     var appWindow = chrome.app.window.current();
     
+    // parse query parameters
+    var query = (function parseQuery() {
+        var query = {};
+        var temp = window.location.search.substring(1).split('&');
+        for (var i = temp.length; i--;) {
+            var q = temp[i].split('=');
+            query[q.shift()] = decodeURIComponent(q.join('='));
+        }
+        return query;
+    })();
+    // check if we should change the Url
+    if (query.url) {
+        webview.src = query.url;
+    }
+    
     // keep track of messages that get notified
     var messageCount = (function() {
         var elem = $('title');
@@ -145,7 +160,13 @@ onload = function() {
         // catch all attempts to open a link from the webview
         webview.addEventListener('newwindow', function(ev) {
             ev.preventDefault();
-            open(ev.targetUrl);
+            var target = ev.targetUrl;
+            
+            if (/hipchat\.com\/sign_in/.test(target)) {
+                openNewLoginWindow(target);
+            } else {
+                open(target);
+            }
         });
 
         // catch all permision requests and allow them
@@ -240,6 +261,21 @@ onload = function() {
     // open a link in the browser
     function open(url) {
         window.open(url);
+    }
+    
+    function openNewLoginWindow(url) {
+        var windowId = "hipChatWebview_" + Math.random();
+        
+        var bounds = {
+            width: appWindow.innerBounds.width,
+            height: appWindow.innerBounds.height
+        };
+        
+        chrome.app.window.create('main.html?url=' + encodeURIComponent(url), {
+            id: windowId,
+            innerBounds: bounds,
+            frame: "chrome"
+        });
     }
     
     chrome.notifications.onClicked.addListener(function(notificationId) {
