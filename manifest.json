@@ -25,5 +25,14 @@
         "unlimitedStorage",
         "webview",
         "https://www.google-analytics.com/"
-    ]
+    ],
+    "commands": {
+        "new-team-login": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Y",
+                "mac": "Command+Shift+Y"
+            },
+            "description": "New team login"
+        }
+    }
 }

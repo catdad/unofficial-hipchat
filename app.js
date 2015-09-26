@@ -328,4 +328,11 @@ onload = function() {
     });
     // set state to idle after 60 seconds of inactivity
     chrome.idle.setDetectionInterval(60);
+    
+    // listen to commands
+    chrome.commands.onCommand.addListener(function(command) {
+        if (command === 'new-team-login') {
+            openNewLoginWindow('https://www.hipchat.com/sign_in');
+        }
+    });
 };
