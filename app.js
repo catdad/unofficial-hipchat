@@ -264,15 +264,12 @@ onload = function() {
     }
     
     function openNewLoginWindow(url) {
-        var windowId = "hipChatWebview_" + Math.random();
-        
         var bounds = {
             width: appWindow.innerBounds.width,
             height: appWindow.innerBounds.height
         };
         
         chrome.app.window.create('main.html?url=' + encodeURIComponent(url), {
-            id: windowId,
             innerBounds: bounds,
             frame: "chrome"
         });
