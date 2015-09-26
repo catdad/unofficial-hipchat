@@ -261,6 +261,8 @@ onload = function() {
     // open a link in the browser
     function open(url) {
         window.open(url);
+        
+        sendAnalytics('Window', 'open');
     }
     
     function openNewLoginWindow(url) {
@@ -273,6 +275,8 @@ onload = function() {
             innerBounds: bounds,
             frame: "chrome"
         });
+        
+        sendAnalytics('Window', 'second team');
     }
     
     chrome.notifications.onClicked.addListener(function(notificationId) {
