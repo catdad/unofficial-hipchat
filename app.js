@@ -309,7 +309,7 @@ window.onload = function() {
             win.__webviewPartition__ = partition;
         });
         
-        sendAnalytics('Window', 'second team');
+        sendAnalytics('Team', 'second team');
     }
     
     chrome.notifications.onClicked.addListener(function(notificationId) {
