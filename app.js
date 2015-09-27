@@ -1,7 +1,21 @@
 /* jshint browser: true, devel: true */
 /* global chrome, analytics */
 
-onload = function() {
+(function() {
+    var wv = document.querySelector('webview');
+    
+    // always set partition first, as this can only be done before the first navigation
+    if (wv && window.__webviewPartition__) {
+        wv.setAttribute('partition', 'persist:' + window.__webviewPartition__);
+    }
+    
+    // set the URL of the webview... this should always be defined
+    if (wv && window.__webviewUrl__) {
+        wv.setAttribute('src', window.__webviewUrl__);
+    }
+})();
+
+window.onload = function() {
     // some utils
     var $ = function(sel) {
 		return document.querySelector(sel);
@@ -49,20 +63,20 @@ onload = function() {
     var webview = $('#chat');
     var appWindow = chrome.app.window.current();
     
-    // parse query parameters
-    var query = (function parseQuery() {
-        var query = {};
-        var temp = window.location.search.substring(1).split('&');
-        for (var i = temp.length; i--;) {
-            var q = temp[i].split('=');
-            query[q.shift()] = decodeURIComponent(q.join('='));
-        }
-        return query;
-    })();
-    // check if we should change the Url
-    if (query.url) {
-        webview.src = query.url;
-    }
+//    // parse query parameters
+//    var query = (function parseQuery() {
+//        var query = {};
+//        var temp = window.location.search.substring(1).split('&');
+//        for (var i = temp.length; i--;) {
+//            var q = temp[i].split('=');
+//            query[q.shift()] = decodeURIComponent(q.join('='));
+//        }
+//        return query;
+//    })();
+//    // check if we should change the Url
+//    if (query.url) {
+//        webview.src = query.url;
+//    }
     
     // keep track of messages that get notified
     var messageCount = (function() {
@@ -271,9 +285,28 @@ onload = function() {
             height: appWindow.innerBounds.height
         };
         
-        chrome.app.window.create('main.html?url=' + encodeURIComponent(url), {
+        chrome.app.window.create('main.html', {
             innerBounds: bounds,
             frame: "chrome"
+        }, function(newAppWindow) {
+            var win = newAppWindow.contentWindow;
+            var partition = 'second';
+            
+//            if (window.__webviewPartition__ !== undefined) {
+//                // this is the main window, let's open
+//                url = 'https://www.hipchat.com/chat';
+//            } else {
+//                // go to a third and final partition
+//                partition = 'other';
+//            }
+            
+            // overload this url with the chat url, so that users don't
+            // have to press the "launch the app" button
+            win.__webviewUrl__ = url;
+            
+            // assigning a different partition name isolates the memory
+            // space of the new webview from the one in the main window
+            win.__webviewPartition__ = partition;
         });
         
         sendAnalytics('Window', 'second team');

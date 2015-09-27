@@ -32,10 +32,9 @@ function runApp() {
             width: 1024,
             height: 768
         },
-        frame: "chrome",
-//        frame: {
-//            type: "chrome",
-//            color: '#fefefe'
-//        },
+        frame: "chrome"
+    }, function(appWindow) {
+        var url = 'https://www.hipchat.com/chat';
+        appWindow.contentWindow.__webviewUrl__ = url;
     });
 }
