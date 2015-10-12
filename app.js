@@ -231,6 +231,10 @@ window.onload = function() {
 
         if (data.type && data.type === 'notification') {
             notify(data);
+        } else if (data.type && data.type === 'connection') {
+            notify({
+                message: 'Connection is lost'
+            });
         }
     });
     
