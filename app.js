@@ -174,9 +174,13 @@ window.onload = function() {
         // catch all attempts to open a link from the webview
         webview.addEventListener('newwindow', function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
             var target = ev.targetUrl;
             
-            if (/hipchat\.com\/sign_in/.test(target)) {
+            if (/hipchat\.com\/chat\/video/.test(target)) {
+                console.log('video button', target);
+                openNewVideoWindow(target);
+            } else if (/hipchat\.com\/sign_in/.test(target)) {
                 openNewLoginWindow(target);
             } else {
                 open(target);
@@ -187,7 +191,16 @@ window.onload = function() {
         webview.addEventListener('permissionrequest', function(ev) {
             if (ev.permission === 'media') {
                 ev.request.allow();
+            } else {
+                // allow all requests... this might not be a good idea
+                console.log('permission:', ev.permission);
+                ev.request.allow();
             }
+            
+            // just in case, log all permission requests,
+            // in order to make sure I am not missing any requests 
+            // that the app tries to use
+            sendAnalytics('Permission', (ev.permission && ev.permission.toString()) || 'unknwon');
         });
         
         function linkOpen(ev) {
@@ -314,6 +327,25 @@ window.onload = function() {
         });
         
         sendAnalytics('Team', 'second team');
+    }
+    
+    function openNewVideoWindow(url) {
+        var bounds = {
+            width: appWindow.innerBounds.width,
+            height: appWindow.innerBounds.height
+        };
+        
+        chrome.app.window.create('main.html', {
+            innerBounds: bounds,
+            frame: "chrome"
+        }, function(newAppWindow) {
+            var win = newAppWindow.contentWindow;
+//            var partition = 'persist:trusted';
+            
+            win.__webviewUrl__ = url;
+        });
+        
+        sendAnalytics('Team', 'video chat');
     }
     
     chrome.notifications.onClicked.addListener(function(notificationId) {
