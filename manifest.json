@@ -17,6 +17,9 @@
         }
     },
     "permissions": [
+        "audioCapture",
+        "desktopCapture",
+        "videoCapture",
         "background",
         "clipboardWrite",
         "idle",
