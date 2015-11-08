@@ -403,6 +403,9 @@ window.onload = function() {
     chrome.commands.onCommand.addListener(function(command) {
         if (command === 'new-team-login') {
             openNewLoginWindow('https://www.hipchat.com/sign_in');
+        } else if (command === 'reload') {
+            console.log('reload');
+            webview.reload();
         }
     });
 };

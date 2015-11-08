@@ -36,6 +36,12 @@
                 "mac": "Command+Shift+Y"
             },
             "description": "New team login"
+        },
+        "reload": {
+            "suggested_key": {
+                "default": "Ctrl+R"
+            },
+            "description": "Reload webview"
         }
     }
 }
