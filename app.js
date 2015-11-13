@@ -16,6 +16,8 @@
 })();
 
 window.onload = function() {
+    var DEBUG_MODE = true;
+    
     // some utils
     var $ = function(sel) {
 		return document.querySelector(sel);
@@ -177,7 +179,7 @@ window.onload = function() {
             ev.stopPropagation();
             var target = ev.targetUrl;
             
-            if (/hipchat\.com\/chat\/video/.test(target)) {
+            if (DEBUG_MODE && /hipchat\.com\/chat\/video/.test(target)) {
                 console.log('video button', target);
                 openNewVideoWindow(target);
             } else if (/hipchat\.com\/sign_in/.test(target)) {
@@ -240,11 +242,10 @@ window.onload = function() {
 
     window.addEventListener('message', function(ev) {
         var data = ev.data;
-        console.log(data);
 
         if (data.type && data.type === 'notification') {
             notify(data);
-        } else if (data.type && data.type === 'connection') {
+        } else if (DEBUG_MODE && data.type && data.type === 'connection') {
             notify({
                 message: 'Connection is lost'
             });
