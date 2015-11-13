@@ -95,6 +95,7 @@ window.onload = function() {
             return count;
         };
     })();
+    
     var shouldNotify = true;
 
     // generate the absolute URL for the content script
@@ -193,7 +194,7 @@ window.onload = function() {
         webview.addEventListener('permissionrequest', function(ev) {
             if (ev.permission === 'media') {
                 ev.request.allow();
-            } else {
+            } else if (DEBUG_MODE) {
                 // allow all requests... this might not be a good idea
                 console.log('permission:', ev.permission);
                 ev.request.allow();
