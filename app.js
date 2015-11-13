@@ -367,6 +367,8 @@ window.onload = function() {
             });
         });
         
+        appWindow.clearAttention();
+        
         sendAnalytics('State', 'focused');
     };
     
