@@ -62,22 +62,26 @@
         }
         .close {
             background: rgba(224, 11, 11, 0);
-            transition: background 400ms ease;
         }
         .close:hover {
             background: rgba(224, 11, 11, 1);
         }
         
         .button svg {
-            width: 0.8rem;
-            height: 0.8rem;
+            width: 0.65rem;
+            height: 0.65rem;
             display: block;
             margin: auto;
         }
         .button svg path {
-            stroke: white;
-            stroke-width: 10;
+            stroke: rgba(255, 255, 255, 0.5);
+            stroke-width: 20;
             fill: none;
+            
+            transition: stroke 300ms ease;
+        }
+        .button:hover svg path {
+            stroke: rgba(255, 255, 255, 1);
         }
         
         webview.full {
@@ -97,7 +101,7 @@
                 <svg viewBox="0,0,110,110"><path d="M10,10L100,100M10,100L100,10"></path></svg>
             </button>
             <button id="maximize" class="button maximize">
-                <svg viewBox="0,0,110,110"><path d="M10,10L10,100L100,100L100,10L10,10"></path></svg>
+                <svg viewBox="0,0,110,110"><path d="M10,10L10,100L100,100L100,10L10,10L10,18L100,18"></path></svg>
             </button>
             <button id="minimize" class="button minimize">
                 <svg viewBox="0,0,110,110"><path d="M100,100L10,100"></path></svg>
