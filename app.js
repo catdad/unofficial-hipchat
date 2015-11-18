@@ -306,7 +306,7 @@ window.onload = function() {
         
         chrome.app.window.create('main.html', {
             innerBounds: bounds,
-            frame: "chrome"
+            frame: "none"
         }, function(newAppWindow) {
             var win = newAppWindow.contentWindow;
             var partition = 'second';
@@ -339,7 +339,7 @@ window.onload = function() {
         
         chrome.app.window.create('main.html', {
             innerBounds: bounds,
-            frame: "chrome"
+            frame: "none"
         }, function(newAppWindow) {
             var win = newAppWindow.contentWindow;
 //            var partition = 'persist:trusted';
