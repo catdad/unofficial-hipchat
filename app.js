@@ -369,7 +369,7 @@ window.onload = function() {
             });
         });
         
-        appWindow.clearAttention();
+//        appWindow.clearAttention();
         
         sendAnalytics('State', 'focused');
     };
@@ -412,4 +412,19 @@ window.onload = function() {
             webview.reload();
         }
     });
+    
+    // code related to the header bar
+    $('#close').onclick = window.close.bind(window);
+    $('#minimize').onclick = function() { appWindow.minimize(); };
+    $('#maximize').onclick = function() { 
+        var max = 'at-max';
+        
+        if (this.classList.contains(max)) {
+            appWindow.restore();
+            this.classList.remove(max);
+        } else {
+            appWindow.maximize();
+            this.classList.add(max);
+        }
+    };
 };
