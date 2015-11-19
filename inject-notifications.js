@@ -149,29 +149,31 @@ script.textContent = '!' + function() {
     
     /////////////////////////////////////////
     // Watch for the connection lost message
-    ///////////////////////////////////////// 
+    /////////////////////////////////////////
     
-    var connectionMessage = document.querySelector('.hc-connection-notification');
+    // Note: HipChat removed this... it seems like the connection is more stable now
     
-    console.log('connection box is', connectionMessage);
-    
-    var observer = new MutationObserver(function(mutations) {
-        if (connectionMessage.classList.contains('transparent')) {
-            console.log('connection is fine');
-        } else {
-            console.log('connection is lost');
-            
-            return send({
-                type: 'connection',
-                state: 'lost'
-            });
-        }
-    });
-    
-    observer.observe(connectionMessage, {
-        attributes: true,
-        attributeFilter: ['class']
-    });
+//    var connectionMessage = document.querySelector('.hc-connection-notification');
+//    
+//    console.log('connection box is', connectionMessage);
+//    
+//    var observer = new MutationObserver(function(mutations) {
+//        if (connectionMessage.classList.contains('transparent')) {
+//            console.log('connection is fine');
+//        } else {
+//            console.log('connection is lost');
+//            
+//            return send({
+//                type: 'connection',
+//                state: 'lost'
+//            });
+//        }
+//    });
+//    
+//    observer.observe(connectionMessage, {
+//        attributes: true,
+//        attributeFilter: ['class']
+//    });
     
 } + '();';
 
