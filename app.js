@@ -150,7 +150,6 @@ window.onload = function() {
         if (!scriptDone || !loadDone) { return; }
 
         webview.executeScript({ code: code }, function(){
-            console.log('script was executed', arguments);
             // post the first message, to initialize message sending from the
             // guest webiew page
             webview.contentWindow.postMessage('thing', '*');
