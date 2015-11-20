@@ -18,6 +18,7 @@
 window.onload = function() {
     var DEBUG_MODE = true;
 //    var DEBUG_MODE = false;
+    var STORED_DATA = window.__storedData__ || {};
     
     // some utils
     var $ = function(sel) {
@@ -303,6 +304,9 @@ window.onload = function() {
             // assigning a different partition name isolates the memory
             // space of the new webview from the one in the main window
             win.__webviewPartition__ = partition;
+            
+            // pass any stored data from this window to the new one
+            win.__storedData__ = STORED_DATA;
         });
         
         sendAnalytics('Team', 'second team');
@@ -405,16 +409,38 @@ window.onload = function() {
         }
     };
     
+    var showClass = 'show-settings';
+    function closeOverlay() {
+        body.classList.remove(showClass);
+    }
+    function openOverlay() {
+        body.classList.add(showClass);
+    }
+    
     // manage the settings control
     var overlay = $('#overlay');
     var body = $('body');
     $('#settings').onclick = function() {
-        var show = 'show-settings';
         
-        if (body.classList.contains(show)) {
-            body.classList.remove(show);
+        if (body.classList.contains(showClass)) {
+            closeOverlay();
         } else {
-            body.classList.add(show);
+            openOverlay();
         }
     };
+    
+    var serverKey = 'chat-server-url';
+    var serverInput = $('#chat-server');
+    if (STORED_DATA && STORED_DATA[serverKey]) {
+        serverInput.value = STORED_DATA[serverKey];
+    }
+    $('#save').onclick = function() {
+        var val = serverInput.value || '';
+        var data = {};
+        data[serverKey] = val;
+        chrome.storage.local.set(data);
+        
+        closeOverlay();
+    };
+    $('#cancel').onclick = closeOverlay;
 };

@@ -132,6 +132,7 @@
             background: white;
             border: 1px solid gray;
             padding: 5px;
+            cursor: pointer;
         }
         
         .show-settings .overlay {
@@ -171,12 +172,12 @@
         <label for="chat-server">Chat server:</label>
         <input type="text" name="chat-server" id="chat-server" placeholder="https://www.hipchat.com/chat" />
         
-        <button class="action">Cancel</button>
-        <button class="action">Save</button>
+        <button class="action" id="cancel">Cancel</button>
+        <button class="action" id="save">Save</button>
     </div>
     
     <script src="analytics/google-analytics-bundle.js"></script>
-<!--    <script src="analytics/analytics-driver.js"></script>-->
+    <script src="analytics/analytics-driver.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

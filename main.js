@@ -8,7 +8,7 @@
  * @see http://developer.chrome.com/apps/app.window.html
  */
 chrome.app.runtime.onLaunched.addListener(function() {
-    runApp();
+    chrome.storage.local.get(runApp);
 });
 
 /**
@@ -17,7 +17,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
  * @see http://developer.chrome.com/apps/app.runtime.html
  */
 chrome.app.runtime.onRestarted.addListener(function() {
-    runApp();
+    chrome.storage.local.get(runApp);
 });
 
 /**
@@ -25,7 +25,12 @@ chrome.app.runtime.onRestarted.addListener(function() {
  *
  * @see http://developer.chrome.com/apps/app.window.html
  */
-function runApp() {
+function runApp(storedData) {
+    
+    console.log(storedData);
+    
+    var urlToLoad = storedData['chat-server-url'] || 'https://www.hipchat.com/chat';
+    
     chrome.app.window.create('main.html', {
         id: "hipChatWebview",
         innerBounds: {
@@ -35,7 +40,7 @@ function runApp() {
 //        frame: "chrome"
         frame: "none"
     }, function(appWindow) {
-        var url = 'https://www.hipchat.com/chat';
-        appWindow.contentWindow.__webviewUrl__ = url;
+        appWindow.contentWindow.__webviewUrl__ = urlToLoad;
+        appWindow.contentWindow.__storedData__ = storedData;
     });
 }
