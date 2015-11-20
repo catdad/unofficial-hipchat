@@ -10,6 +10,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
+            font-size: 0.95em;
             background: #205081; /* original hipchat color */
         }
 
@@ -29,7 +30,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            right: 120px;
+            right: 160px;
             
             -webkit-app-region: drag;
         }
@@ -40,10 +41,10 @@
             right: 0;
         }
         
-        .controls-bar > button {
-            float: right;
+        svg:not(:root) { 
+            overflow: visible !important;
         }
-        
+
         .button {
             float: right;
             width: 40px;
@@ -89,9 +90,61 @@
             bottom: 0px;
             width: 100%;
             height: auto;
+            
+            transition: -webkit-filter 300ms ease, filter 300ms ease;
         }
         
-        svg:not(:root) { overflow: visible !important; }
+        .overlay, .overlay * {
+            box-sizing: border-box;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 30px;
+            
+            padding: 20px;
+            
+            width: 50%;
+            min-width: 200px;
+            max-width: 400px;
+            height: 150px;
+            
+            margin: auto;
+            background: #f5f5f5;
+            border-radius: 5px;
+            border: 1px solid #8C9FB2;
+        }
+        
+        .overlay input {
+            display: block;
+            background: none;
+            border: none;
+            border-bottom: 1px solid gray;
+            width: 100%;
+            padding: 3px;
+            font-size: 1.2em;
+        }
+        .overlay .action {
+            background: white;
+            border: 1px solid gray;
+            padding: 5px;
+        }
+        
+        .show-settings .overlay {
+            display: block;
+        }
+        
+        .show-settings webview {
+            -webkit-filter: blur(3px) opacity(80%);
+                    filter: blur(3px) opacity(80%);
+            
+            /* disable clicking */
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -107,16 +160,23 @@
             <button id="minimize" class="button minimize">
                 <svg viewBox="0,0,100,100"><path d="M100,100L10,100"></path></svg>
             </button>
-<!--
             <button id="settings" class="button settings">
                 <svg viewBox="0,0,100,100"><path d="M0,0 L100,0 M0,50 L100,50 M0,100 L100,100"></path></svg>
             </button>
--->
         </div>
     </header>
     <webview id="chat" class="full" partition="persist:trusted"></webview>
+    
+    <div id="overlay" class="overlay">
+        <label for="chat-server">Chat server:</label>
+        <input type="text" name="chat-server" id="chat-server" placeholder="https://www.hipchat.com/chat" />
+        
+        <button class="action">Cancel</button>
+        <button class="action">Save</button>
+    </div>
+    
     <script src="analytics/google-analytics-bundle.js"></script>
-    <script src="analytics/analytics-driver.js"></script>
+<!--    <script src="analytics/analytics-driver.js"></script>-->
     <script src="app.js"></script>
 </body>
 </html>
