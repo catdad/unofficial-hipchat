@@ -415,6 +415,7 @@ window.onload = function() {
     }
     function openOverlay() {
         body.classList.add(showClass);
+        serverInput.value = STORED_DATA[serverKey] || '';
     }
     
     // manage the settings control
@@ -431,16 +432,32 @@ window.onload = function() {
     
     var serverKey = 'chat-server-url';
     var serverInput = $('#chat-server');
-    if (STORED_DATA && STORED_DATA[serverKey]) {
-        serverInput.value = STORED_DATA[serverKey];
-    }
-    $('#save').onclick = function() {
+    var checkSave = function() {
         var val = serverInput.value || '';
-        var data = {};
-        data[serverKey] = val;
-        chrome.storage.local.set(data);
+        
+        // if the value has changed, we need to 
+        // save it and reload the app    
+        if (val !== STORED_DATA[serverKey]) {
+            STORED_DATA[serverKey] = val;
+            
+            var data = {};
+            val = val || STORED_DATA.defaultServerUrl;
+            data[serverKey] = val;
+            
+            chrome.storage.local.set(data, function() {
+                // just change the webview source and data
+                // I don't feel like reloading the whole app
+                webview.src = val;
+            });    
+        }
         
         closeOverlay();
     };
+    
+    serverInput.onkeypress = function(ev) {
+        if (ev.keyCode === 13) { checkSave(); }
+    };
+    
+    $('#save').onclick = checkSave;
     $('#cancel').onclick = closeOverlay;
 };

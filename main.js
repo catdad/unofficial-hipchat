@@ -26,10 +26,8 @@ chrome.app.runtime.onRestarted.addListener(function() {
  * @see http://developer.chrome.com/apps/app.window.html
  */
 function runApp(storedData) {
-    
-    console.log(storedData);
-    
-    var urlToLoad = storedData['chat-server-url'] || 'https://www.hipchat.com/chat';
+    storedData.defaultServerUrl = 'https://www.hipchat.com/chat';
+    var urlToLoad = storedData['chat-server-url'] || storedData.defaultServerUrl;
     
     chrome.app.window.create('main.html', {
         id: "hipChatWebview",

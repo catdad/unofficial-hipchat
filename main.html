@@ -125,23 +125,37 @@
             background: #f5f5f5;
             color: #444;
             
-            box-shadow: 0 3px 15px -5px black;
+            box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.75);
         }
         
         .overlay input {
             display: block;
             background: none;
             border: none;
-            border-bottom: 1px solid gray;
+            border-bottom: 1px solid #A9A9A9;
             width: 100%;
             padding: 3px;
+            margin: 10px 0;
             font-size: 1.2em;
         }
+        .overlay input:focus {
+            outline: none;
+            border-color: #3572b0;
+            border-width: 2px;
+        }
         .overlay .action {
-            background: white;
-            border: 1px solid gray;
-            padding: 5px;
+            background: #A9A9A9;
+            color: white;
+            font-weight: bold;
+            border: 0;
+            width: 70px;
+            margin: 0 0 0 20px;
+            border-radius: 3px;
             cursor: pointer;
+        }
+        
+        .action.primary {
+            background: #3572b0;
         }
         
         .overlay .container {
@@ -152,12 +166,17 @@
         }
         .overlay .container.header {
             font-size: 1.6rem;
+            height: 4rem;
         }
         .overlay .container.content {
             background: white;
             flex-grow: 10;
         }
         .overlay .container.footer {
+            height: 4rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
         }
         
         /* effect when the settings overay is shown */
@@ -209,7 +228,7 @@
         
         <div class="container footer">
             <button class="action" id="cancel">Cancel</button>
-            <button class="action" id="save">Save</button>    
+            <button class="action primary" id="save">Save</button>    
         </div>        
     </div>
     
