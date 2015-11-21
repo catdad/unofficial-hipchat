@@ -350,8 +350,6 @@ window.onload = function() {
             });
         });
         
-//        appWindow.clearAttention();
-        
         sendAnalytics('State', 'focused');
     };
     
@@ -418,11 +416,12 @@ window.onload = function() {
         serverInput.value = STORED_DATA[serverKey] || '';
     }
     
+    // ----------------------------------------
     // manage the settings control
+    // ----------------------------------------
     var overlay = $('#overlay');
     var body = $('body');
     $('#settings').onclick = function() {
-        
         if (body.classList.contains(showClass)) {
             closeOverlay();
         } else {
@@ -455,7 +454,9 @@ window.onload = function() {
     };
     
     serverInput.onkeypress = function(ev) {
-        if (ev.keyCode === 13) { checkSave(); }
+        if (ev.keyCode === 13) { 
+            checkSave();
+        }
     };
     
     $('#save').onclick = checkSave;
