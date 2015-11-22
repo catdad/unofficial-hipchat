@@ -440,13 +440,12 @@ window.onload = function() {
             STORED_DATA[serverKey] = val;
             
             var data = {};
-            val = val || STORED_DATA.defaultServerUrl;
             data[serverKey] = val;
             
             chrome.storage.local.set(data, function() {
                 // just change the webview source and data
                 // I don't feel like reloading the whole app
-                webview.src = val;
+                webview.src = val || STORED_DATA.defaultServerUrl;
             });    
         }
         

@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>HipChat</title>
-
+    
     <style>
+        @font-face {
+            font-family: 'Lato';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Lato Regular'), local('Lato-Regular'), url(assets/1YwB1sO8YE1Lyjf12WNiUA.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+        }
+        
         html, body {
             margin: 0;
             padding: 0;
@@ -17,6 +25,9 @@
                 white 75px, 
                 white
             );
+        }
+        html, body, button, input, label {
+            font-family: Lato, sans-serif;
         }
 
         header {
@@ -123,7 +134,7 @@
             border-radius: 5px;
             border: 1px solid rgba(32, 80, 129, 0.2);
             background: #f5f5f5;
-            color: #444;
+            color: #555;
             
             box-shadow: 0 4px 10px -4px rgba(0, 0, 0, 0.75);
         }
@@ -134,9 +145,11 @@
             border: none;
             border-bottom: 1px solid #A9A9A9;
             width: 100%;
+            height: 2rem;
             padding: 3px;
             margin: 10px 0;
-            font-size: 1.2em;
+            font-size: 1.1rem;
+            color: currentColor;
         }
         .overlay input:focus {
             outline: none;
@@ -149,7 +162,7 @@
             font-weight: bold;
             border: 0;
             width: 70px;
-            margin: 0 0 0 20px;
+            margin: 0 0 0 15px;
             border-radius: 3px;
             cursor: pointer;
         }
@@ -177,6 +190,14 @@
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
+        }
+        
+        label.description {
+            display: block;
+            font-size: .8rem;
+            font-style: italic;
+            color: #A9A9A9;
+            margin: 4px 0;
         }
         
         /* effect when the settings overay is shown */
@@ -216,10 +237,11 @@
     
     <div id="overlay" class="overlay">
         <div class="container header">
-            HipChat Configuration
+            Settings
         </div>
         <div class="container content">
-            <label for="chat-server">Chat server:</label>
+            <label for="chat-server">HipChat connection:</label>
+            <label class="description">If you use HipChat Server, enter the web client url here.</label>
             <input type="text"
                    name="chat-server" 
                    id="chat-server" 
