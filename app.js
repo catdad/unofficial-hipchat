@@ -148,6 +148,9 @@ window.onload = function() {
     // execute every time the page is done loading
     // this will inject the code into any page that happens to load
     function loadstop() {
+        // update the url bar
+        updateUrlBar();
+        
         // we do not want to register events more than once
         if (loadDone) {
             return loadCode();
@@ -416,6 +419,22 @@ window.onload = function() {
         serverInput.value = STORED_DATA[serverKey] || '';
     }
     
+    // code to update the url bar display
+    var url = $('#url');
+    function updateUrlBar() {
+        if (!STORED_DATA.showWebviewUrl) { 
+            url.innerHTML = '';
+            return;
+        }
+        
+        var src = webview.src;
+        var match = src.match(/(\/\/)(.*)(\/)/);
+        
+        if (match && match[2]) {
+            url.innerHTML = match[2];
+        }
+    }
+    
     // ----------------------------------------
     // manage the settings control
     // ----------------------------------------
@@ -441,6 +460,14 @@ window.onload = function() {
             
             var data = {};
             data[serverKey] = val;
+            
+            if (val === '') {
+                data.showWebviewUrl = false;
+                STORED_DATA.showWebviewUrl = false;
+            } else {
+                data.showWebviewUrl = true;
+                STORED_DATA.showWebviewUrl = true;
+            }
             
             chrome.storage.local.set(data, function() {
                 // just change the webview source and data

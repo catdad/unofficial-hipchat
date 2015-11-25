@@ -57,6 +57,18 @@
             right: 0;
         }
         
+        .url {
+            display: flex;
+            align-items: center;
+            float: right;
+            height: 100%;
+            font-size: .95rem;
+            margin-top: -1px;
+            margin-right: 8px;
+            color: white;
+            opacity: 0.5;
+        }
+        
         /* title bar buttons */
         .button {
             float: right;
@@ -217,7 +229,7 @@
 </head>
 <body>
     <header>
-        <div class="drag-bar"></div>
+        <div class="drag-bar"><div id="url" class="url"></div></div>
         <div class="controls-bar">
             <button id="close" class="button close">
                 <svg viewBox="0,0,100,100"><path d="M10,10L100,100M10,100L100,10"></path></svg>
