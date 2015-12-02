@@ -395,7 +395,9 @@ window.onload = function() {
         }
     });
     
+    // -----------------------------------------------
     // code related to the header bar
+    // -----------------------------------------------
     $('#close').onclick = window.close.bind(window);
     $('#minimize').onclick = function() { appWindow.minimize(); };
     $('#maximize').onclick = function() { 
@@ -422,7 +424,7 @@ window.onload = function() {
     // code to update the url bar display
     var url = $('#url');
     function updateUrlBar() {
-        if (!STORED_DATA.showWebviewUrl) { 
+        if (!STORED_DATA.showWebviewUrl) {
             url.innerHTML = '';
             return;
         }
