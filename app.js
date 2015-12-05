@@ -4,6 +4,13 @@
 (function() {
     var wv = document.querySelector('webview');
     
+//    if (wv && window.__webviewOverride__) {
+//        var newWebview = window.__webviewOverride__;
+//        newWebview.id = wv.id;
+//        newWebview.className = wv.className;
+//        wv.parentElement.replaceChild(window.__webviewOverride__, wv);
+//    }
+    
     // always set partition first, as this can only be done before the first navigation
     if (wv && window.__webviewPartition__) {
         wv.setAttribute('partition', 'persist:' + window.__webviewPartition__);
@@ -46,7 +53,7 @@ window.onload = function() {
         // it's an object, use the keys
         else {
             // loop through all keys
-            for (var name in obj){
+            for (var name in obj) {
                 // call the function with context and native-like arguments
                 if (hasProp.call(obj, name)) {
                     callback.call(context, obj[name], name, obj);
@@ -170,8 +177,7 @@ window.onload = function() {
             var target = ev.targetUrl;
             
             if (DEBUG_MODE && /hipchat\.com\/chat\/video/.test(target)) {
-                console.log('video button', target);
-                openNewVideoWindow(target);
+                openNewVideoWindow(target, ev.window);
             } else if (/hipchat\.com\/sign_in/.test(target)) {
                 openNewLoginWindow(target);
             } else {
@@ -179,22 +185,6 @@ window.onload = function() {
             }
         });
 
-        // catch all permision requests and allow them
-        webview.addEventListener('permissionrequest', function(ev) {
-            if (ev.permission === 'media') {
-                ev.request.allow();
-            } else if (DEBUG_MODE) {
-                // allow all requests... this might not be a good idea
-                console.log('permission:', ev.permission);
-                ev.request.allow();
-            }
-            
-            // just in case, log all permission requests,
-            // in order to make sure I am not missing any requests 
-            // that the app tries to use
-            sendAnalytics('Permission', (ev.permission && ev.permission.toString()) || 'unknwon');
-        });
-        
         function linkOpen(ev) {
             if (ev.linkUrl) {
                 open(ev.linkUrl);
@@ -229,6 +219,22 @@ window.onload = function() {
     }
 
     webview.addEventListener('contentload', loadstop);
+    
+    // catch all permision requests and allow them
+    webview.addEventListener('permissionrequest', function(ev) {
+        if (ev.permission === 'media') {
+            ev.request.allow();
+        } else if (DEBUG_MODE) {
+            // allow all requests... this might not be a good idea
+            console.log('permission:', ev.permission);
+            ev.request.allow();
+        }
+
+        // just in case, log all permission requests,
+        // in order to make sure I am not missing any requests 
+        // that the app tries to use
+        sendAnalytics('Permission', (ev.permission && ev.permission.toString()) || 'unknwon');
+    });
 
     window.addEventListener('message', function(ev) {
         var data = ev.data;
@@ -315,7 +321,7 @@ window.onload = function() {
         sendAnalytics('Team', 'second team');
     }
     
-    function openNewVideoWindow(url) {
+    function openNewVideoWindow(url, newWindow) {
         var bounds = {
             width: appWindow.innerBounds.width,
             height: appWindow.innerBounds.height
@@ -328,7 +334,18 @@ window.onload = function() {
             var win = newAppWindow.contentWindow;
 //            var partition = 'persist:trusted';
             
-            win.__webviewUrl__ = url;
+            // found this on a Google group, here:
+            // https://groups.google.com/a/chromium.org/forum/#!msg/chromium-apps/zzGLSiyWCnM/dMBcPBW2BUcJ
+            // probaly still a bad idea, but it works
+            win.addEventListener('load', function() {
+                // Currently, there is no url, and one is not provided when the
+                // window is created above. We have to first attach the the new 
+                // webview to the parent, and only then load the page. Otherwise, 
+                // HC will throw, because it relies on window.opener for the video app.
+                var wv = win.document.querySelector('webview');
+                newWindow.attach(wv);
+                wv.src = url;
+            });
         });
         
         sendAnalytics('Team', 'video chat');
