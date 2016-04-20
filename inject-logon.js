@@ -37,6 +37,10 @@ script.textContent = '!' + function() {
             appWindow = e.source;
             appOrigin = e.origin;
         }
+        
+        if (e.data && e.data.type === 'logon') {
+            attemptLogon(e.data);
+        }
     }
 
     // send messages to the parent
@@ -78,6 +82,20 @@ script.textContent = '!' + function() {
                 password: passwordField.value
             });
         });
+    }
+    
+    function attemptLogon(data) {
+        var emailField = document.querySelector('#email');
+        var passwordField = document.querySelector('#password');
+        var signInButton = document.querySelector('#signin');
+        
+        if (!emailField || !passwordField || !signInButton) {
+            return;
+        }
+        
+        emailField.value = data.email;
+        passwordField.value = data.password;
+        signInButton.click();
     }
     
     if (/\/sign_in/.test(window.location.href)) {

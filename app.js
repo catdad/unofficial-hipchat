@@ -134,7 +134,7 @@ window.onload = function() {
         });
     });
     
-    // savely embed the code; this will wait for us to have the code, and for
+    // safely embed the code; this will wait for us to have the code, and for
     // the page to finish loading before injecting the code
     function loadCode() {
         // wait until both are done in order to load the code
@@ -146,6 +146,8 @@ window.onload = function() {
             webview.contentWindow.postMessage('thing', '*');
             
             sendAnalytics('Script', 'injected');
+            
+            sendLogon();
         });
     }
 
@@ -247,7 +249,17 @@ window.onload = function() {
         }
     });
     
-    // save account inforamtion
+    function sendMessage(message) {
+        if (!loadDone) {
+            return;
+        }
+        
+        webview.contentWindow.postMessage(message, '*');
+    }
+    
+    //////////////////////////////////
+    // Acount management
+    //////////////////////////////////
     var accountsKey = 'accounts';
     function accountMessage(data) {
         console.log(data);
@@ -258,10 +270,31 @@ window.onload = function() {
             password: data.password
         };
         
-        chrome.storage.local.set(data);
+        var saveData = {};
+        saveData[accountsKey] = accounts;
+        
+        chrome.storage.local.set(saveData);
     }
     
-    // send a notification
+    function sendLogon() {
+        var accounts = STORED_DATA[accountsKey];
+        
+        if (Object.keys(accounts).length) {
+            // temp -- use the first account
+            var key = Object.keys(accounts)[0];
+            var val = accounts[key];
+            
+            sendMessage({
+                type: 'logon',
+                email: val.email,
+                password: val.password
+            });
+        }
+    }
+    
+    /////////////////////////////////
+    // Notifiations
+    /////////////////////////////////
     function notify(data) {
         if (!shouldNotify) { return; }
         
