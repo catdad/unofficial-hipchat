@@ -1,15 +1,9 @@
 /* jshint browser: true, devel: true */
 /* global chrome, analytics */
 
-(function() {
+function onLoadStuff() {
+
     var wv = document.querySelector('webview');
-    
-//    if (wv && window.__webviewOverride__) {
-//        var newWebview = window.__webviewOverride__;
-//        newWebview.id = wv.id;
-//        newWebview.className = wv.className;
-//        wv.parentElement.replaceChild(window.__webviewOverride__, wv);
-//    }
     
     // always set partition first, as this can only be done before the first navigation
     if (wv && window.__webviewPartition__) {
@@ -20,9 +14,11 @@
     if (wv && window.__webviewUrl__) {
         wv.setAttribute('src', window.__webviewUrl__);
     }
-})();
+}
 
 window.onload = function() {
+    onLoadStuff();
+    
     var DEBUG_MODE = true;
 //    var DEBUG_MODE = false;
     var STORED_DATA = window.__storedData__ || {};
@@ -95,6 +91,7 @@ window.onload = function() {
     // generate the absolute URL for the content script
     var scripts = [
 //        chrome.runtime.getURL('inject-options.js'),
+        chrome.runtime.getURL('inject-logon.js'),
         chrome.runtime.getURL('inject-notifications.js'),
 //        chrome.runtime.getURL('inject-xhr.js')
     ];
@@ -241,12 +238,28 @@ window.onload = function() {
 
         if (data.type && data.type === 'notification') {
             notify(data);
+        } else if (data.type && data.type === 'account') {
+            accountMessage(data);    
         } else if (DEBUG_MODE && data.type && data.type === 'connection') {
             notify({
                 message: 'Connection is lost'
             });
         }
     });
+    
+    // save account inforamtion
+    var accountsKey = 'accounts';
+    function accountMessage(data) {
+        console.log(data);
+        
+        var accounts = STORED_DATA[accountsKey] || {};
+        accounts[data.email] = {
+            email: data.email,
+            password: data.password
+        };
+        
+        chrome.storage.local.set(data);
+    }
     
     // send a notification
     function notify(data) {
