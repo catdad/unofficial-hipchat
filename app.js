@@ -1,5 +1,5 @@
 /* jshint browser: true, devel: true */
-/* global chrome, analytics */
+/* global chrome, analytics, $ */
 
 function onLoadStuff() {
 
@@ -20,47 +20,12 @@ window.addEventListener('load', function() {
     onLoadStuff();
     
     var DEBUG_MODE = true;
-//    var DEBUG_MODE = false;
+//    DEBUG_MODE = false;
     var APP = window.__app__ || {};
     window.__app__ = APP;
     
     var STORED_DATA = window.__storedData__ || {};
     window.__storedData__ = STORED_DATA;
-    
-    // some utils
-    var $ = function(sel) {
-		return document.querySelector(sel);
-	};
-    $.forEach = function(obj, cb, context){
-        // check for a native forEach function
-        var native = [].forEach,
-            hasProp = Object.prototype.hasOwnProperty,
-            callback = (typeof cb === 'function') ? cb : function noop() {};
-
-        // if there is a native function, use it
-        if (native && obj.forEach === native) {
-            //don't bother if there is no function
-            obj.forEach(callback, context);
-        }
-        // if the object is array-like
-        else if (obj.length === +obj.length) {
-            // loop though all values
-            for (var i = 0, length = obj.length; i < length; i++) {
-                // call the function with the context and native-like arguments
-                callback.call(context, obj[i], i, obj);
-            }
-        }
-        // it's an object, use the keys
-        else {
-            // loop through all keys
-            for (var name in obj) {
-                // call the function with context and native-like arguments
-                if (hasProp.call(obj, name)) {
-                    callback.call(context, obj[name], name, obj);
-                }
-            }
-        }
-    };
     
     function sendAnalytics(category, action) {
         category = category || 'Default';
@@ -262,8 +227,6 @@ window.addEventListener('load', function() {
     }
     
     APP.sendMessage = sendMessage;
-    
-    
     
     /////////////////////////////////
     // Notifiations

@@ -35,6 +35,7 @@
             width: 100%;
             height: 30px;
             background: #1A4067; /* slightly darker, to look like a header */
+            z-index: 10;
         }
         
         header > div {
@@ -224,6 +225,28 @@
             /* disable clicking */
             pointer-events: none;
         }
+        
+        /* acounts bubble */
+        .bubble {
+            position: absolute;
+            z-index: 5;
+            right: 0;
+            top: 30px;
+            width: 100%;
+            height: 100%;
+            max-width: 400px;
+            max-height: 300px;
+            background: #1A4067;
+            box-sizing: border-box;
+            border-radius: 0 0 0 3px;
+            
+            transform: translateY(-100%);
+            transition: transform 300ms ease;
+        }
+        .bubble.visible {
+            display: block;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -287,8 +310,13 @@
         </div>        
     </div>
     
+    <div id="accounts-bubble" class="bubble">
+        
+    </div>
+
     <script src="analytics/google-analytics-bundle.js"></script>
     <script src="analytics/analytics-driver.js"></script>
+    <script src="app-util.js"></script>
     <script src="app.js"></script>
     <script src="app-accounts.js"></script>
 </body>

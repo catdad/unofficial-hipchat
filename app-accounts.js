@@ -1,5 +1,5 @@
 /* jshint browser: true, devel: true */
-/* global chrome, analytics */
+/* global chrome, analytics, $ */
 
 window.addEventListener('load', function() {
     var APP = window.__app__ || {};
@@ -8,21 +8,23 @@ window.addEventListener('load', function() {
     var STORED_DATA = window.__storedData__ || {};
     window.__storedData__ = STORED_DATA;
     
-    //////////////////////////////////
-    // Acount management
-    //////////////////////////////////
     var accountsKey = 'accounts';
+    var ACCOUNTS = STORED_DATA[accountsKey] || {};
+    STORED_DATA[accountsKey] = ACCOUNTS;
+    
+    ////////////////////////////////////////
+    // Acount management
+    ////////////////////////////////////////
     function accountMessage(data) {
         console.log(data);
         
-        var accounts = STORED_DATA[accountsKey] || {};
-        accounts[data.email] = {
+        ACCOUNTS[data.email] = {
             email: data.email,
             password: data.password
         };
         
         var saveData = {};
-        saveData[accountsKey] = accounts;
+        saveData[accountsKey] = ACCOUNTS;
         
         chrome.storage.local.set(saveData);
     }
@@ -43,6 +45,28 @@ window.addEventListener('load', function() {
         }
     }
     
+    ////////////////////////////////////////
+    // Accounts UI and things
+    ////////////////////////////////////////
+    var accountsButton = $('#accounts');
+    var accountsBubble = $('#accounts-bubble');
+    
+    accountsButton.addEventListener('click', function() {
+        $.toggleClass(accountsBubble, 'visible');
+    });
+    
+    function addAccountUI(account) {
+        // init the accounts bubble UI
+        var div = $.elem('div');
+        div.innerHTML = account.email;
+        accountsBubble.appendChild(div);
+    }
+    
+    $.forEach(ACCOUNTS, addAccountUI);
+    
+    ////////////////////////////////////////
+    // Public Accounts API
+    ////////////////////////////////////////
     APP.accountMessage = accountMessage;
     APP.sendLogon = sendLogon;
     
