@@ -37,8 +37,14 @@
         }
     };
 
-    $.elem = function(name) {
-        return document.createElement(name);
+    $.elem = function(name, className) {
+        var el = document.createElement(name);
+        
+        if (className) {
+            el.className = className;
+        }
+        
+        return el;
     };
 
     $.toggleClass = function(elem, className) {
