@@ -75,9 +75,11 @@ var BuildDest = './build';
 var JSSource = [
     './main.js',
     './app.js',
+    './app-accounts.js',
 //    './inject-xhr.js',
 //    './inject-options.js',
     './inject-notifications.js',
+    './inject-logon.js',
     './analytics/**'
 ];
 var HTMLSource = './*.html';
