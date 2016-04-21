@@ -16,12 +16,16 @@ function onLoadStuff() {
     }
 }
 
-window.onload = function() {
+window.addEventListener('load', function() {
     onLoadStuff();
     
     var DEBUG_MODE = true;
 //    var DEBUG_MODE = false;
+    var APP = window.__app__ || {};
+    window.__app__ = APP;
+    
     var STORED_DATA = window.__storedData__ || {};
+    window.__storedData__ = STORED_DATA;
     
     // some utils
     var $ = function(sel) {
@@ -147,7 +151,7 @@ window.onload = function() {
             
             sendAnalytics('Script', 'injected');
             
-            sendLogon();
+            APP.sendLogon();
         });
     }
 
@@ -241,7 +245,7 @@ window.onload = function() {
         if (data.type && data.type === 'notification') {
             notify(data);
         } else if (data.type && data.type === 'account') {
-            accountMessage(data);    
+            APP.accountMessage(data);    
         } else if (DEBUG_MODE && data.type && data.type === 'connection') {
             notify({
                 message: 'Connection is lost'
@@ -257,40 +261,9 @@ window.onload = function() {
         webview.contentWindow.postMessage(message, '*');
     }
     
-    //////////////////////////////////
-    // Acount management
-    //////////////////////////////////
-    var accountsKey = 'accounts';
-    function accountMessage(data) {
-        console.log(data);
-        
-        var accounts = STORED_DATA[accountsKey] || {};
-        accounts[data.email] = {
-            email: data.email,
-            password: data.password
-        };
-        
-        var saveData = {};
-        saveData[accountsKey] = accounts;
-        
-        chrome.storage.local.set(saveData);
-    }
+    APP.sendMessage = sendMessage;
     
-    function sendLogon() {
-        var accounts = STORED_DATA[accountsKey];
-        
-        if (Object.keys(accounts).length) {
-            // temp -- use the first account
-            var key = Object.keys(accounts)[0];
-            var val = accounts[key];
-            
-            sendMessage({
-                type: 'logon',
-                email: val.email,
-                password: val.password
-            });
-        }
-    }
+    
     
     /////////////////////////////////
     // Notifiations
@@ -552,4 +525,4 @@ window.onload = function() {
     
     $('#save').onclick = checkSave;
     $('#cancel').onclick = closeOverlay;
-};
+});
