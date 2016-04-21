@@ -63,7 +63,7 @@ window.addEventListener('load', function() {
         
         var remove = $.elem('button', 'remove');
         // I don't feel like building this as UI
-        remove.innerHTML = '<svg class="icon"><use xlink:href="#close" /></svg>';
+        remove.innerHTML = '<svg class="icon"><use xlink:href="#trash" /></svg>';
         
 //        elem.appendChild(remove);
         email.appendChild(remove);
