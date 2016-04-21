@@ -46,7 +46,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            right: 160px;
+            right: 200px;
             
             -webkit-app-region: drag;
         }
@@ -96,24 +96,20 @@
         svg:not(:root) { 
             overflow: visible !important;
         }
-        .button svg {
-            width: 0.6rem;
-            height: 0.6rem;
+        svg#defs {
+            display: none;
+        }
+        svg.icon {
+            width: 0.7rem;
+            height: 0.7rem;
             display: block;
             margin: auto;
-        }
-        .button svg path {
-            stroke: rgba(255, 255, 255, 0.5);
-            stroke-width: 20;
-            fill: none;
-            
-            transition: stroke 300ms ease;
-        }
-        .button:hover svg path {
-            stroke: rgba(255, 255, 255, 1);
-        }
-        .button circle, .button ellipse, .button rect {
             fill: rgba(255, 255, 255, 0.5);
+            
+            transition: fill 300ms ease;
+        }
+        .button:hover svg.icon {
+            fill: rgba(255, 255, 255, 1);
         }
         
         webview.full {
@@ -231,27 +227,42 @@
     </style>
 </head>
 <body>
+    <svg id="defs">
+        <defs>
+            <symbol viewBox="0 0 100 100" id="close">
+                <path d="M15 0 0 15 35 50 0 85 15 100 50 65 85 100 100 85 65 50 100 15 85 0 50 35 15 0z"/>
+            </symbol>            
+            <symbol viewBox="0 0 100 100" id="user">
+                <path d="M50 65C22.4 65 0 71.7 0 80l0 20 100 0 0-20C100 71.7 77.6 65 50 65zM80 30C80 46.6 66.6 60 50 60 33.4 60 20 46.6 20 30 20 13.4 33.4 0 50 0 66.6 0 80 13.4 80 30z"/>
+            </symbol>            
+            <symbol viewBox="0 0 100 100" id="menu">
+                <path d="M0 0 0 20 100 20 100 0 0 0zm0 40 0 20 100 0 0-20-100 0zm0 40 0 20 100 0 0-20-100 0z"/>
+            </symbol>            
+            <symbol viewBox="0 0 100 100" id="maximize">
+                <path d="M0 0L0 100 100 100 100 0 0 0zM10 30L90 30 90 90 10 90 10 30z"/>
+            </symbol>            
+            <symbol viewBox="0 0 100 100" id="minimize">
+                <rect x="0" y="80" width="100" height="20" />
+            </symbol>            
+        </defs>
+    </svg>
     <header>
         <div class="drag-bar"><div id="url" class="url"></div></div>
         <div class="controls-bar">
             <button id="close" class="button close">
-                <svg viewBox="0,0,100,100"><path d="M10,10L100,100M10,100L100,10"></path></svg>
+                <svg class="icon"><use xlink:href="#close" /></svg>
             </button>
             <button id="maximize" class="button maximize">
-                <svg viewBox="0,0,100,100"><path d="M10,10L10,100L100,100L100,10L10,10L10,18L100,18"></path></svg>
+                <svg class="icon"><use xlink:href="#maximize" /></svg>
             </button>
             <button id="minimize" class="button minimize">
-                <svg viewBox="0,0,100,100"><path d="M100,100L10,100"></path></svg>
+                <svg class="icon"><use xlink:href="#minimize" /></svg>
             </button>
             <button id="settings" class="button settings">
-                <svg viewBox="0,0,100,100"><path d="M0,0 L100,0 M0,50 L100,50 M0,100 L100,100"></path></svg>
+                <svg class="icon"><use xlink:href="#menu" /></svg>
             </button>
             <button id="accounts" class="button accounts">
-                <svg viewBox="0,0,100,100">
-                    <circle cx="50" cy="30" r="30"/>
-                    <ellipse cx="50" cy="80" rx="50" ry="15"/>
-                    <rect x="0" y="80" width="100" height="20"/>
-                </svg>
+                <svg class="icon"><use xlink:href="#user" /></svg>
             </button>
         </div>
     </header>
