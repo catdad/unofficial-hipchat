@@ -57,9 +57,18 @@ window.addEventListener('load', function() {
     
     function addAccountUI(account) {
         // init the accounts bubble UI
-        var div = $.elem('div');
-        div.innerHTML = account.email;
-        accountsBubble.appendChild(div);
+        var elem = $.elem('div', 'account');
+        var email = $.elem('div', 'email');
+        email.innerHTML = account.email;
+        
+        var remove = $.elem('button', 'remove');
+        // I don't feel like building this as UI
+        remove.innerHTML = '<svg class="icon"><use xlink:href="#close" /></svg>';
+        
+//        elem.appendChild(remove);
+        email.appendChild(remove);
+        elem.appendChild(email);
+        accountsBubble.appendChild(elem);
     }
     
     $.forEach(ACCOUNTS, addAccountUI);
