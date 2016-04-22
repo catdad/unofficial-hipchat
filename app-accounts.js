@@ -50,6 +50,7 @@ window.addEventListener('load', function() {
     ////////////////////////////////////////
     var accountsButton = $('#accounts');
     var accountsBubble = $('#accounts-bubble');
+    var accountsList = $('#accounts-selector');
     
     accountsButton.addEventListener('click', function() {
         $.toggleClass(accountsBubble, 'visible');
@@ -57,7 +58,7 @@ window.addEventListener('load', function() {
     
     function addAccountUI(account) {
         // init the accounts bubble UI
-        var elem = $.elem('div', 'account');
+        var elem = $.elem('div', 'account-entry');
         var email = $.elem('div', 'email');
         email.innerHTML = account.email;
         
@@ -65,10 +66,9 @@ window.addEventListener('load', function() {
         // I don't feel like building this as UI
         remove.innerHTML = '<svg class="icon"><use xlink:href="#icon-trash" /></svg>';
         
-//        elem.appendChild(remove);
         email.appendChild(remove);
         elem.appendChild(email);
-        accountsBubble.appendChild(elem);
+        accountsList.appendChild(elem);
     }
     
     $.forEach(ACCOUNTS, addAccountUI);

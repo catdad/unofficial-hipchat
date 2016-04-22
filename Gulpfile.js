@@ -10,6 +10,7 @@ var uglify = require('gulp-uglify');
 var stripdebug = require('gulp-strip-debug');
 var gulpif = require('gulp-if');
 var zip = require('gulp-zip');
+var less = require('gulp-less');
 
 var argv = require('yargs').argv;
 var package = require('./package.json');
@@ -83,6 +84,8 @@ var JSSource = [
     './inject-logon.js',
     './analytics/**'
 ];
+var LessRootSource = './less/app.less';
+var LessSource = './less/**/*.less';
 var HTMLSource = './*.html';
 var ManifestSource = './manifest.json';
 var AssetsSource = './assets/**';
@@ -95,6 +98,12 @@ gulp.task('clean', function() {
 gulp.task('assets', function() {
     return gulp.src(AssetsSource)
         .pipe(gulp.dest( path.join(BuildDest, 'assets') ));
+});
+
+gulp.task('less', function() {
+    return gulp.src(LessRootSource)
+        .pipe(less())
+        .pipe(gulp.dest('.'));
 });
 
 gulp.task('manifest', function() {
