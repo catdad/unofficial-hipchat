@@ -11,6 +11,7 @@ var stripdebug = require('gulp-strip-debug');
 var gulpif = require('gulp-if');
 var zip = require('gulp-zip');
 var less = require('gulp-less');
+var sourcemaps = require('gulp-sourcemaps');
 
 var argv = require('yargs').argv;
 var package = require('./package.json');
@@ -102,7 +103,9 @@ gulp.task('assets', function() {
 
 gulp.task('less', function() {
     return gulp.src(LessRootSource)
+        .pipe(sourcemaps.init())
         .pipe(less())
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest('.'))
         .pipe(gulp.dest(BuildDest));
 });
@@ -139,7 +142,7 @@ gulp.task('zip', ['assets', 'js', 'html', 'manifest'], function() {
         .pipe(gulp.dest(BuildDest));
 });
 
-gulp.task('build', ['assets', 'js', 'html', 'manifest'], function() {
+gulp.task('build', ['less', 'assets', 'js', 'html', 'manifest'], function() {
     if (production) {
         return gulp.start('zip');
     }

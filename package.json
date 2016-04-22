@@ -22,12 +22,12 @@
     "gulp-each": "^0.1.0",
     "gulp-filter": "^3.0.1",
     "gulp-if": "^1.2.5",
+    "gulp-less": "^3.0.5",
+    "gulp-sourcemaps": "^2.0.0-alpha",
     "gulp-strip-debug": "^1.0.2",
     "gulp-uglify": "^1.4.0",
     "gulp-zip": "^3.0.2",
     "yargs": "^3.24.0"
   },
-  "dependencies": {
-    "gulp-less": "^3.0.5"
-  }
+  "dependencies": {}
 }
