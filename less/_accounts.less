@@ -1,0 +1,71 @@
+/* acounts bubble */
+.bubble {
+    position: absolute;
+    z-index: 5;
+    right: 0;
+    top: 30px;
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+    max-height: 60%;
+    background: #1A4067;
+    box-sizing: border-box;
+    border-radius: 0 0 0 3px;
+    border-left: 2px solid #3572B0;
+    overflow: auto;
+
+    color: white;
+
+    transform: translateY(-100%);
+    transition: transform 300ms ease;
+}
+.bubble.visible {
+    display: block;
+    transform: translateY(0);
+}
+
+.bubble .email {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.bubble .remove {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: none;
+    outline: none;
+    border: none;
+    height: 100%;
+    padding: 0 12px;
+
+    cursor: pointer;
+}
+
+.bubble .remove svg {
+    padding: 5px;
+    border-radius: 50%;
+    background: none;
+
+    transition: background 300ms ease, fill 300ms ease;
+}
+.bubble .remove:hover svg {
+    background: rgba(255, 255, 255, 0.2);
+    fill: rgba(255, 255, 255, 1);
+}
+
+.email, .add-account {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.account-entry, .add-account {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 40px;
+    border-bottom: 2px solid #3572B0;
+}
+
+.add-account {
+    background: #3572B0;
+}

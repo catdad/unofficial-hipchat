@@ -1,0 +1,82 @@
+header {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    background: #1A4067; /* slightly darker, to look like a header */
+    z-index: 10;
+}
+
+header > div {
+    display: inline-block;
+}
+
+.drag-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    right: 200px;
+
+    -webkit-app-region: drag;
+}
+
+.controls-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.url {
+    display: flex;
+    align-items: center;
+    float: right;
+    height: 100%;
+    font-size: 0.9rem;
+    margin-top: -1px;
+    margin-right: 8px;
+    color: white;
+    opacity: 0.5;
+}
+
+/* title bar buttons */
+.button {
+    float: right;
+    width: 40px;
+    height: 30px;
+    color: #f8f8f8;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    background: rgba(53, 114, 176, 0);
+    transition: background 300ms ease;
+    cursor: pointer;
+}
+.button:hover {
+    background: rgba(53, 114, 176, 1);
+}
+.close {
+    background: rgba(224, 11, 11, 0);
+}
+.close:hover {
+    background: rgba(224, 11, 11, 1);
+}
+
+/* title bar svg icons */
+svg:not(:root) { 
+    overflow: visible !important;
+}
+svg#defs {
+    display: none;
+}
+svg.icon {
+    width: 0.7rem;
+    height: 0.7rem;
+    display: block;
+    margin: auto;
+    fill: rgba(255, 255, 255, 0.5);
+
+    transition: fill 300ms ease;
+}
+.button:hover svg.icon {
+    fill: rgba(255, 255, 255, 1);
+}
