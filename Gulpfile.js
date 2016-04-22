@@ -103,7 +103,8 @@ gulp.task('assets', function() {
 gulp.task('less', function() {
     return gulp.src(LessRootSource)
         .pipe(less())
-        .pipe(gulp.dest('.'));
+        .pipe(gulp.dest('.'))
+        .pipe(gulp.dest(BuildDest));
 });
 
 gulp.task('manifest', function() {
@@ -149,10 +150,11 @@ gulp.task('default', ['clean'], function() {
 });
 
 gulp.task('watch', ['default'], function() {
-    gulp.watch(JSSource, ['js']); //.on('change', function(ev) { console.log('js', ev.path); });
-    gulp.watch(HTMLSource, ['html']); //.on('change', function(ev) { console.log('html', ev.path); });
-    gulp.watch(ManifestSource, ['manifest']); //.on('change', function(ev) { console.log('manifest', ev.path); });
-    gulp.watch(AssetsSource, ['assets']); //.on('change', function(ev) { console.log('assets', ev.path); });
+//    gulp.watch(JSSource, ['js']);
+//    gulp.watch(HTMLSource, ['html']);
+//    gulp.watch(ManifestSource, ['manifest']);
+//    gulp.watch(AssetsSource, ['assets']);
+    gulp.watch(LessSource, ['less']);
 });
 
 
