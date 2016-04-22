@@ -45,3 +45,4 @@ Temporary Items
 # build files
 build/
 node_modules/
+app.css
