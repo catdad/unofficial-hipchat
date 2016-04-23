@@ -27,6 +27,32 @@ window.addEventListener('load', function() {
         chrome.storage.local.set(saveData);
     }
     
+    function saveAccounts(done) {
+        chrome.storage.local.get(function(data) {
+            $.forEach(ACCOUNTS, function(ac, key) {
+                data[accountsKey][key] = ac;
+            });
+            
+            chrome.storage.local.set(data, function() {
+                if (done && typeof done === 'function') {
+                    done();
+                }
+            });
+        });
+    }
+    
+    function setDefaultAccount(account) {
+        $.forEach(ACCOUNTS, function(ac) {
+            if (ac.email === account.email) {
+                ac.isDefault = true;
+            } else {
+                ac.isDefault = false;
+            }
+        });
+        
+        saveAccounts();
+    }
+    
     function useLogon(account) {
         if (account.email && account.password) {
             APP.sendMessage({
@@ -39,9 +65,10 @@ window.addEventListener('load', function() {
     
     function sendLogon() {
         var accounts = STORED_DATA[accountsKey];
+        var account;
         
         if (window.__logonAccount__) {
-            var account = window.__logonAccount__;
+            account = window.__logonAccount__;
             return useLogon(account);
         }
         
@@ -49,12 +76,14 @@ window.addEventListener('load', function() {
             return;
         }
         
-        if (Object.keys(accounts).length) {
-            // temp -- use the first account
-            var key = Object.keys(accounts)[0];
-            var val = accounts[key];
-            
-            return useLogon(val);
+        $.forEach(accounts, function(ac) {
+            if (!account || ac.isDefault) {
+                account = ac;
+            }
+        });
+        
+        if (account) {
+            useLogon(account);
         }
     }
     
@@ -81,15 +110,41 @@ window.addEventListener('load', function() {
         var email = $.elem('div', 'email');
         email.innerHTML = account.email;
         
+        var pin = $.elem('button', 'pin');
+        pin.innerHTML = '<svg class="icon"><use xlink:href="#icon-pin" /></svg>';
+        
+        if (account.isDefault) {
+            pin.classList.add('selected');
+        }
+        
+        var buttons = $.elem('div', 'buttons');
+        
         var remove = $.elem('button', 'remove');
         // I don't feel like building this as UI
         remove.innerHTML = '<svg class="icon"><use xlink:href="#icon-trash" /></svg>';
         
+        // add events to all buttons
         elem.addEventListener('click', function() {
             logonOnClick(account);
         });
         
-        email.appendChild(remove);
+        pin.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            
+            $.forEach(accountsList.querySelectorAll('.pin.selected'), function(el) {
+                el.classList.remove('selected');
+            });
+            
+            pin.classList.add('selected');
+            
+            setDefaultAccount(account);
+        });
+        
+        // build the DOM
+        buttons.appendChild(pin);
+        buttons.appendChild(remove);
+        
+        email.appendChild(buttons);
         elem.appendChild(email);
         accountsList.appendChild(elem);
     }

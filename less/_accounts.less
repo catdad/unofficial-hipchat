@@ -1,6 +1,9 @@
 @import (reference) "_mixins";
 
 .bubble {
+    @button-width: 26px;
+    @buttons-width: (@button-width * 2) + 6px;
+    
     position: absolute;
     z-index: 5;
     right: 0;
@@ -30,53 +33,66 @@
         text-overflow: ellipsis;
     }
     
-    .remove {
+    .buttons {
         position: absolute;
+        width: @buttons-width;
+        height: 100%;
         right: 0;
         top: 0;
-        background: none;
-        outline: none;
-        border: none;
-        height: 100%;
-        padding: 0 12px;
-
-        .pointer();
+        overflow: hidden;
         
-        svg {
-            padding: 5px;
-            border-radius: 50%;
+        & button {
+            display: inline-block;
             background: none;
+            outline: none;
+            border: none;
+            height: 100%;
+            width: @button-width;
+            box-sizing: border-box;
 
-            transition: background 300ms ease, fill 300ms ease;
-        }
-        
-        &:hover svg {
-            & {
-                .rgba(white, 0.2);
-                background: @result;
+            .pointer();
+            
+            svg {
+                padding: 5px;
+                border-radius: 50%;
+                background: none;
+
+                transition: background 300ms ease, fill 300ms ease;
             }
 
-            & {
+            &:hover svg {
+                & {
+                    .rgba(white, 0.2);
+                    background: @result;
+                }
+
+                & {
+                    .rgba(white, 1);
+                    fill: @result;
+                }
+            }
+            
+            &.selected svg {
                 .rgba(white, 1);
                 fill: @result;
             }
         }
     }
-}
+    
+    .email, .add-account {
+        padding: 10px;
+        .pointer();
+    }
 
-.email, .add-account {
-    padding: 10px;
-    .pointer();
-}
+    .account-entry, .add-account {
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        padding-right: @buttons-width + 4px;
+        border-bottom: 2px solid @blue-medium;
+    }
 
-.account-entry, .add-account {
-    position: relative;
-    width: 100%;
-    box-sizing: border-box;
-    padding-right: 40px;
-    border-bottom: 2px solid @blue-medium;
-}
-
-.add-account {
-    background: @blue-medium;
+    .add-account {
+        background: @blue-medium;
+    }
 }
