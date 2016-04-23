@@ -125,7 +125,8 @@ gulp.task('assets', function() {
 gulp.task('less', function() {
     return gulp.src(LessRootSource)
         .pipe(sourcemaps.init())
-        .pipe(handle(less()))
+//        .pipe(handle(less()))
+        .pipe(less())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('.'))
         .pipe(gulp.dest(BuildDest));
