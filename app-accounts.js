@@ -16,15 +16,18 @@ window.addEventListener('load', function() {
     // Acount management
     ////////////////////////////////////////
     function accountMessage(data) {
-        ACCOUNTS[data.email] = {
-            email: data.email,
-            password: data.password
-        };
+        var key = data.email;
+        var account = ACCOUNTS[key] || {};
+        
+        account.email = data.email;
+        account.password = data.password;
+        
+        ACCOUNTS[key] = account;
         
         var saveData = {};
         saveData[accountsKey] = ACCOUNTS;
         
-        chrome.storage.local.set(saveData);
+        saveAccounts();
     }
     
     function saveAccounts(done) {
