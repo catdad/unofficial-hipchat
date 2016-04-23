@@ -1,8 +1,10 @@
+@import (reference) "_mixins";
+
 header {
     position: absolute;
     width: 100%;
     height: 30px;
-    background: #1A4067; /* slightly darker, to look like a header */
+    background: @blue-darkest; /* slightly darker, to look like a header */
     z-index: 10;
 }
 
@@ -43,22 +45,27 @@ header > div {
     float: right;
     width: 40px;
     height: 30px;
-    color: #f8f8f8;
+    color: @white;
     font-size: 1rem;
     border: none;
     outline: none;
-    background: rgba(53, 114, 176, 0);
     transition: background 300ms ease;
     cursor: pointer;
+    
+    .rgba(@blue-medium, 0);
+    background: @result;
 }
 .button:hover {
-    background: rgba(53, 114, 176, 1);
+    .rgba(@blue-medium, 1);
+    background: @result;
 }
 .close {
-    background: rgba(224, 11, 11, 0);
+    .rgba(@red, 0);
+    background: @result;
 }
 .close:hover {
-    background: rgba(224, 11, 11, 1);
+    .rgba(@red, 1);
+    background: @result;
 }
 
 /* title bar svg icons */
@@ -73,10 +80,13 @@ svg.icon {
     height: 0.7rem;
     display: block;
     margin: auto;
-    fill: rgba(255, 255, 255, 0.5);
+    
+    .rgba(white, 0.5);
+    fill: @result;
 
     transition: fill 300ms ease;
 }
 .button:hover svg.icon {
-    fill: rgba(255, 255, 255, 1);
+    .rgba(white, 1);
+    fill: @result;
 }

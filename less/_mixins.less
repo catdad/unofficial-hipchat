@@ -1,3 +1,11 @@
 @blue-darkest: #1A4067;
 @blue-dark:    #205081;
 @blue-medium:  #3572B0;
+
+@white: #f8f8f8;
+@red: #e00b0b;
+
+.rgba(@color, @decimal: 1) {
+    @ensureColor: color(@color);
+    @result: rgba( red(@ensureColor), green(@ensureColor), blue(@ensureColor), @decimal );
+}
