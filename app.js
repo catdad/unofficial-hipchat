@@ -307,8 +307,7 @@ window.addEventListener('load', function() {
     }
     
     function openNewDefaultLoginWindow(account) {
-//        openNewLoginWindow('https://www.hipchat.com/sign_in', account);
-        openNewLoginWindow('https://www.hipchat.com/chat', account);
+        openNewLoginWindow('https://www.hipchat.com/chat', account || false);
     }
     
     function openNewVideoWindow(url, newWindow) {

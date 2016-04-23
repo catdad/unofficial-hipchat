@@ -42,7 +42,7 @@ window.addEventListener('load', function() {
         
         if (window.__logonAccount__) {
             var account = window.__logonAccount__;
-            useLogon(account);
+            return useLogon(account);
         }
         
         if (window.__logonAccount__ === false) {
@@ -54,7 +54,7 @@ window.addEventListener('load', function() {
             var key = Object.keys(accounts)[0];
             var val = accounts[key];
             
-            useLogon(val);
+            return useLogon(val);
         }
     }
     
@@ -71,7 +71,7 @@ window.addEventListener('load', function() {
     });
     
     function logonOnClick(account) {
-        $.trigger('newLogon', false);
+        $.trigger('newLogon', account);
         $.toggleClass(accountsBubble, 'visible');
     }
     
