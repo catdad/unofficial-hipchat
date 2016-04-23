@@ -9,13 +9,13 @@
     height: auto;
     max-width: 300px;
     max-height: 60%;
-    background: #1A4067;
+    background: @blue-darkest;
     box-sizing: border-box;
     border-radius: 0 0 0 3px;
     border-left: 2px solid @blue-medium;
     overflow: auto;
 
-    color: white;
+    color: @white;
 
     transform: translateY(-100%);
     transition: transform 300ms ease;
@@ -40,7 +40,7 @@
         height: 100%;
         padding: 0 12px;
 
-        cursor: pointer;
+        .pointer();
         
         svg {
             padding: 5px;
@@ -51,24 +51,31 @@
         }
         
         &:hover svg {
-            background: rgba(255, 255, 255, 0.2);
-            fill: rgba(255, 255, 255, 1);
+            & {
+                .rgba(white, 0.2);
+                background: @result;
+            }
+
+            & {
+                .rgba(white, 1);
+                fill: @result;
+            }
         }
     }
 }
 
 .email, .add-account {
     padding: 10px;
-    cursor: pointer;
+    .pointer();
 }
 
 .account-entry, .add-account {
     width: 100%;
     box-sizing: border-box;
     padding-right: 40px;
-    border-bottom: 2px solid #3572B0;
+    border-bottom: 2px solid @blue-medium;
 }
 
 .add-account {
-    background: #3572B0;
+    background: @blue-medium;
 }

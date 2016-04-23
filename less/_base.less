@@ -4,7 +4,8 @@ html, body {
     width: 100%;
     height: 100%;
     font-size: 0.95em;
-    background: #205081; /* original hipchat color */
+    
+    background: @blue-dark; /* original hipchat color */
     background: linear-gradient(
         #205081 70px, 
         white 75px, 
@@ -13,7 +14,7 @@ html, body {
 }
 
 html, body, button, input, label {
-    font-family: Roboto, sans-serif;
+    .default-font();
 }
 
 .relative {
