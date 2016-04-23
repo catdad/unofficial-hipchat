@@ -45,6 +45,10 @@ window.addEventListener('load', function() {
             useLogon(account);
         }
         
+        if (window.__logonAccount__ === false) {
+            return;
+        }
+        
         if (Object.keys(accounts).length) {
             // temp -- use the first account
             var key = Object.keys(accounts)[0];
@@ -60,10 +64,16 @@ window.addEventListener('load', function() {
     var accountsButton = $('#accounts');
     var accountsBubble = $('#accounts-bubble');
     var accountsList = $('#accounts-selector');
+    var addAccount = $('#add-account');
     
     accountsButton.addEventListener('click', function() {
         $.toggleClass(accountsBubble, 'visible');
     });
+    
+    function logonOnClick(account) {
+        $.trigger('newLogon', false);
+        $.toggleClass(accountsBubble, 'visible');
+    }
     
     function addAccountUI(account) {
         // init the accounts bubble UI
@@ -76,8 +86,7 @@ window.addEventListener('load', function() {
         remove.innerHTML = '<svg class="icon"><use xlink:href="#icon-trash" /></svg>';
         
         elem.addEventListener('click', function() {
-            $.trigger('newLogon', account);
-            $.toggleClass(accountsBubble, 'visible');
+            logonOnClick(account);
         });
         
         email.appendChild(remove);
@@ -86,6 +95,10 @@ window.addEventListener('load', function() {
     }
     
     $.forEach(ACCOUNTS, addAccountUI);
+    
+    addAccount.addEventListener('click', function() {
+        logonOnClick(false);
+    });
     
     ////////////////////////////////////////
     // Public Accounts API
