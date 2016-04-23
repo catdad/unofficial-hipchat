@@ -18,7 +18,7 @@
   "homepage": "https://github.com/catdad/unofficial-hipchat",
   "devDependencies": {
     "del": "^2.0.1",
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-each": "^0.1.0",
     "gulp-filter": "^3.0.1",
     "gulp-if": "^1.2.5",

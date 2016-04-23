@@ -100,17 +100,11 @@ function handle(stream) {
         return stream;
     }
     
-    var through = require('through2');
-    var output = through.obj();
-    
-    output.on('data', stream.write.bind(stream));
-    output.on('end', stream.end.bind(stream));
-    
-    stream.on('error', function(err) {
+    return stream.on('error', function(err) {
         gutil.log(gutil.colors.red(err.message));
+        stream.emit('end');
+        return stream;
     });
-    
-    return output;
 }
 
 gulp.task('clean', function() {
@@ -125,8 +119,8 @@ gulp.task('assets', function() {
 gulp.task('less', function() {
     return gulp.src(LessRootSource)
         .pipe(sourcemaps.init())
-//        .pipe(handle(less()))
-        .pipe(less())
+        .pipe(handle(less()))
+//        .pipe(less())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('.'))
         .pipe(gulp.dest(BuildDest));
