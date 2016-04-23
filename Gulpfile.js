@@ -4,6 +4,7 @@ var path = require('path').posix;
 
 var gulp = require('gulp');
 var del = require('del');
+var gutil = require('gulp-util');
 var each = require('gulp-each');
 var filter = require('gulp-filter');
 var uglify = require('gulp-uglify');
@@ -92,6 +93,26 @@ var ManifestSource = './manifest.json';
 var AssetsSource = './assets/**';
 var AnalyicsSource = './analytics/**';
 
+var isWatchTask = false;
+
+function handle(stream) {
+    if (!isWatchTask) {
+        return stream;
+    }
+    
+    var through = require('through2');
+    var output = through.obj();
+    
+    output.on('data', stream.write.bind(stream));
+    output.on('end', stream.end.bind(stream));
+    
+    stream.on('error', function(err) {
+        gutil.log(gutil.colors.red(err.message));
+    });
+    
+    return output;
+}
+
 gulp.task('clean', function() {
     return del([ path.join(BuildDest, '**') ]);
 });
@@ -104,7 +125,7 @@ gulp.task('assets', function() {
 gulp.task('less', function() {
     return gulp.src(LessRootSource)
         .pipe(sourcemaps.init())
-        .pipe(less())
+        .pipe(handle(less()))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('.'))
         .pipe(gulp.dest(BuildDest));
@@ -153,6 +174,8 @@ gulp.task('default', ['clean'], function() {
 });
 
 gulp.task('watch', ['default'], function() {
+    isWatchTask = true;
+    
 //    gulp.watch(JSSource, ['js']);
 //    gulp.watch(HTMLSource, ['html']);
 //    gulp.watch(ManifestSource, ['manifest']);
