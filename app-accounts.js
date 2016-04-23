@@ -16,8 +16,6 @@ window.addEventListener('load', function() {
     // Acount management
     ////////////////////////////////////////
     function accountMessage(data) {
-        console.log(data);
-        
         ACCOUNTS[data.email] = {
             email: data.email,
             password: data.password
@@ -29,19 +27,30 @@ window.addEventListener('load', function() {
         chrome.storage.local.set(saveData);
     }
     
+    function useLogon(account) {
+        if (account.email && account.password) {
+            APP.sendMessage({
+                type: 'logon',
+                email: account.email,
+                password: account.password
+            });
+        }
+    }
+    
     function sendLogon() {
         var accounts = STORED_DATA[accountsKey];
+        
+        if (window.__logonAccount__) {
+            var account = window.__logonAccount__;
+            useLogon(account);
+        }
         
         if (Object.keys(accounts).length) {
             // temp -- use the first account
             var key = Object.keys(accounts)[0];
             var val = accounts[key];
             
-            APP.sendMessage({
-                type: 'logon',
-                email: val.email,
-                password: val.password
-            });
+            useLogon(val);
         }
     }
     
@@ -66,6 +75,11 @@ window.addEventListener('load', function() {
         // I don't feel like building this as UI
         remove.innerHTML = '<svg class="icon"><use xlink:href="#icon-trash" /></svg>';
         
+        elem.addEventListener('click', function() {
+            $.trigger('newLogon', account);
+            $.toggleClass(accountsBubble, 'visible');
+        });
+        
         email.appendChild(remove);
         elem.appendChild(email);
         accountsList.appendChild(elem);
@@ -79,4 +93,6 @@ window.addEventListener('load', function() {
     APP.accountMessage = accountMessage;
     APP.sendLogon = sendLogon;
     
+    $.once('ready', sendLogon);
+    $.on('accountMessage', accountMessage);
 });

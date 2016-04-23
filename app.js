@@ -116,7 +116,7 @@ window.addEventListener('load', function() {
             
             sendAnalytics('Script', 'injected');
             
-            APP.sendLogon();
+            $.trigger('ready');
         });
     }
 
@@ -210,7 +210,7 @@ window.addEventListener('load', function() {
         if (data.type && data.type === 'notification') {
             notify(data);
         } else if (data.type && data.type === 'account') {
-            APP.accountMessage(data);    
+            $.trigger('accountMessage', data);
         } else if (DEBUG_MODE && data.type && data.type === 'connection') {
             notify({
                 message: 'Connection is lost'
@@ -275,7 +275,7 @@ window.addEventListener('load', function() {
         sendAnalytics('Window', 'open');
     }
     
-    function openNewLoginWindow(url) {
+    function openNewLoginWindow(url, account) {
         var bounds = {
             width: appWindow.innerBounds.width,
             height: appWindow.innerBounds.height
@@ -287,6 +287,9 @@ window.addEventListener('load', function() {
         }, function(newAppWindow) {
             var win = newAppWindow.contentWindow;
             var partition = 'second';
+            
+            // load account to use for the login
+            win.__logonAccount__ = account;
             
             // overload this url with the chat url, so that users don't
             // have to press the "launch the app" button
@@ -301,6 +304,11 @@ window.addEventListener('load', function() {
         });
         
         sendAnalytics('Team', 'second team');
+    }
+    
+    function openNewDefaultLoginWindow(account) {
+//        openNewLoginWindow('https://www.hipchat.com/sign_in', account);
+        openNewLoginWindow('https://www.hipchat.com/chat', account);
     }
     
     function openNewVideoWindow(url, newWindow) {
@@ -387,7 +395,7 @@ window.addEventListener('load', function() {
     // listen to commands
     chrome.commands.onCommand.addListener(function(command) {
         if (command === 'new-team-login') {
-            openNewLoginWindow('https://www.hipchat.com/sign_in');
+            openNewDefaultLoginWindow();
         } else if (command === 'reload') {
             console.log('reload');
             webview.reload();
@@ -488,4 +496,10 @@ window.addEventListener('load', function() {
     
     $('#save').onclick = checkSave;
     $('#cancel').onclick = closeOverlay;
+    
+    ////////////////////////////////////////
+    // Add public events
+    ////////////////////////////////////////
+    
+    $.on('newLogon', openNewDefaultLoginWindow);
 });
