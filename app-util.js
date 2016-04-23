@@ -57,5 +57,55 @@
         return true;
     };
     
+    (function attachEventEmitter($) {
+        function otherArgs(origArgs) {
+            return [].slice.call(origArgs, 1);
+        }
+        
+        var events = {};
+        
+        $.on = function on(ev, func) {
+            if (!events[ev]) {
+                events[ev] = [];
+            }
+            
+            events[ev].push(func);
+            return $;
+        };
+        
+        $.off = function off(ev, func) {
+            if (events[ev]) {
+                var idx = events[ev].indexOf(func);
+
+                if (idx > -1) {
+                    events[ev].splice(idx, 1);
+                }
+            }
+            
+            return $;
+        };
+        
+        $.once = function once(ev, func) {
+            function temp() {
+                $.off(ev, temp);
+                func.apply(undefined, arguments);
+            }
+            
+            return $.on(ev, temp);
+        };
+        
+        $.trigger = function trigger(ev) {
+            if (events[ev] && events[ev].length) {
+                var args = otherArgs(arguments);
+                
+                $.forEach(events[ev], function(func) {
+                    func.apply(undefined, args);
+                });
+            }
+            
+            return $;
+        };
+    })($);
+    
     root.$ = $;
 })(window);
