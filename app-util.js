@@ -57,6 +57,16 @@
         return true;
     };
     
+    $.noop = function noop() {};
+    
+    $.func = function ensureFunction(func) {
+        if (func && typeof func === 'function') {
+            return func;
+        }
+        
+        return $.noop;
+    };
+    
     (function attachEventEmitter($) {
         function otherArgs(origArgs) {
             return [].slice.call(origArgs, 1);
