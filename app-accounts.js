@@ -28,19 +28,44 @@ window.addEventListener('load', function() {
         saveData[accountsKey] = ACCOUNTS;
         
         saveAccounts();
+        buildAccountUI();
+    }
+    
+    function overloadAccountsState(accounts) {
+        ACCOUNTS = STORED_DATA[accountsKey] = accounts;
     }
     
     function saveAccounts(done) {
+        done = $.func(done);
+        
         chrome.storage.local.get(function(data) {
             $.forEach(ACCOUNTS, function(ac, key) {
                 data[accountsKey][key] = ac;
             });
             
-            chrome.storage.local.set(data, function() {
-                if (done && typeof done === 'function') {
-                    done();
+            overloadAccountsState(data[accountsKey]);
+            
+            chrome.storage.local.set(data, done);
+        });
+    }
+    
+    function deleteAccount(account, done) {
+        done = $.func(done);
+        var accountsCopy = {};
+        
+        chrome.storage.local.get(function(data) {
+            $.forEach(data[accountsKey], function(ac, key) {
+                if (account.email !== ac.email) {
+                    accountsCopy[key] = ac;
                 }
             });
+            
+            var saveData = {};
+            saveData[accountsKey] = accountsCopy;
+            
+            overloadAccountsState(accountsCopy);
+            
+            chrome.storage.local.set(saveData, done);
         });
     }
     
@@ -143,6 +168,14 @@ window.addEventListener('load', function() {
             setDefaultAccount(account);
         });
         
+        remove.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            
+            // just rebuild the whole UI when the
+            // delete is done
+            deleteAccount(account, buildAccountUI);
+        });
+        
         // build the DOM
         buttons.appendChild(pin);
         buttons.appendChild(remove);
@@ -152,7 +185,12 @@ window.addEventListener('load', function() {
         accountsList.appendChild(elem);
     }
     
-    $.forEach(ACCOUNTS, addAccountUI);
+    function buildAccountUI() {
+        accountsList.innerHTML = '';
+        $.forEach(ACCOUNTS, addAccountUI);
+    }
+    
+    buildAccountUI();
     
     addAccount.addEventListener('click', function() {
         logonOnClick(false);
