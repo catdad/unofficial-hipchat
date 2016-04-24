@@ -59,7 +59,13 @@
                 transition: background 300ms ease, fill 300ms ease;
             }
 
-            &:hover svg {
+            &.pin svg {
+                .rgba(white, 0);
+                fill: @result;
+            }
+            
+            &:hover svg,
+            &.pin:hover svg {
                 & {
                     .rgba(white, 0.2);
                     background: @result;
