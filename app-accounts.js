@@ -133,17 +133,15 @@ window.addEventListener('load', function() {
     }
     
     function addAccountUI(account) {
+        var selected = 'selected';
+        
         // init the accounts bubble UI
         var elem = $.elem('div', 'account-entry');
         var email = $.elem('div', 'email');
         email.innerHTML = account.email;
         
-        var pin = $.elem('button', 'pin');
+        var pin = $.elem('button', 'pin' + (account.isDefault ? ' ' + selected : ''));
         pin.innerHTML = '<svg class="icon"><use xlink:href="#icon-pin" /></svg>';
-        
-        if (account.isDefault) {
-            pin.classList.add('selected');
-        }
         
         var buttons = $.elem('div', 'buttons');
         
@@ -159,11 +157,11 @@ window.addEventListener('load', function() {
         pin.addEventListener('click', function(ev) {
             ev.stopPropagation();
             
-            $.forEach(accountsList.querySelectorAll('.pin.selected'), function(el) {
-                el.classList.remove('selected');
+            $.forEach(accountsList.querySelectorAll('.pin.' + selected), function(el) {
+                el.classList.remove(selected);
             });
             
-            pin.classList.add('selected');
+            pin.classList.add(selected);
             
             setDefaultAccount(account);
         });
