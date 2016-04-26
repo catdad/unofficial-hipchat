@@ -1,5 +1,4 @@
 /* jshint browser: true, devel: true, -W027 */
-/* global Strophe */
 
 // For some reason, a Chrome Packaged App, using executeScript, 
 // cannot access or make changes to the window object in the 
