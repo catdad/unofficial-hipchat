@@ -90,7 +90,7 @@
 
     label.description {
         display: block;
-        font-size: .8rem;
+        font-size: 0.8rem;
         font-style: italic;
         color: @gray;
         margin: 4px 0;
@@ -104,8 +104,9 @@
 }
 
 .show-settings webview {
-    -webkit-filter: blur(3px) opacity(80%);
-            filter: blur(3px) opacity(80%);
+    @background-blur: blur(3px) opacity(80%); 
+    -webkit-filter: @background-blur;
+            filter: @background-blur;
 
     /* disable clicking */
     pointer-events: none;

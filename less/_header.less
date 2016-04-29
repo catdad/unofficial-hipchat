@@ -6,10 +6,10 @@ header {
     height: 30px;
     background: @blue-darkest; /* slightly darker, to look like a header */
     z-index: 10;
-}
-
-header > div {
-    display: inline-block;
+    
+    & > div {
+        display: inline-block;
+    }
 }
 
 .drag-bar {
@@ -54,18 +54,20 @@ header > div {
     
     .rgba(@blue-medium, 0);
     background: @result;
-}
-.button:hover {
-    .rgba(@blue-medium, 1);
-    background: @result;
+    
+    &:hover {
+        .rgba(@blue-medium, 1);
+        background: @result;    
+    }
 }
 .close {
     .rgba(@red, 0);
     background: @result;
-}
-.close:hover {
-    .rgba(@red, 1);
-    background: @result;
+    
+    &:hover {
+        .rgba(@red, 1);
+        background: @result;
+    }
 }
 
 /* title bar svg icons */
