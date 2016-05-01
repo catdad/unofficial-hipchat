@@ -1,0 +1,30 @@
+.loader {
+    display: block;
+    position: absolute;
+    top: @frame-height;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: @blue-darkest;
+    color: white;
+    font-weight: bold;
+    
+    &.hide {
+        display: none;
+    }
+    
+    .inner {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        height: 200px;
+        width: 100%;
+        text-align: center;
+    }
+    
+    img {
+        width: 128px;
+        height: 128px;
+    }
+}

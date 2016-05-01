@@ -22,6 +22,12 @@ window.addEventListener('load', function() {
         account.email = data.email;
         account.password = data.password;
         
+        // if this is the first account being added,
+        // mark it as the default
+        if (Object.keys(ACCOUNTS).length === 0) {
+            account.isDefault = true;
+        }
+        
         ACCOUNTS[key] = account;
         
         var saveData = {};
@@ -101,7 +107,7 @@ window.addEventListener('load', function() {
         }
         
         if (window.__logonAccount__ === false) {
-            return;
+            return $.trigger('hideLoader');
         }
         
         $.forEach(accounts, function(ac) {
@@ -112,6 +118,8 @@ window.addEventListener('load', function() {
         
         if (account) {
             useLogon(account);
+        } else {
+            return $.trigger('hideLoader');
         }
     }
     

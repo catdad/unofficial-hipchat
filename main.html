@@ -56,7 +56,7 @@
     </header>
     <webview id="chat" class="full" partition="persist:hipchat"></webview>
     
-    <div id="overlay" class="overlay">
+    <div id="overlay" class="overlay settings">
         <div class="container header">
             Settings
         </div>
@@ -75,6 +75,13 @@
         </div>        
     </div>
     
+    <div id="loader" class="loader">
+        <div class="inner">
+            <img src="assets/256.png" alt="">
+            <div>Loading...</div>            
+        </div>
+    </div>
+    
     <div id="accounts-bubble" class="bubble">
         <div id="accounts-selector" class="relative"></div>
         <div id="add-account" class="add-account">
@@ -86,6 +93,7 @@
     <script src="analytics/analytics-driver.js"></script>
     
     <script src="app-util.js"></script>
+    <script src="app-loader.js"></script>
     <script src="app.js"></script>
     <script src="app-accounts.js"></script>
 </body>
