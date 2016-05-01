@@ -22,6 +22,14 @@ After installing Node, building is as easy as:
     npm install
     gulp
     
+Build for release:
+
+    gulp build
+    
+Active development:
+
+    gulp watch
+    
 ###Installation
 
 Download from the [Chrome Webstore][1].
