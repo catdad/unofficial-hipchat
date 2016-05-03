@@ -27,6 +27,7 @@
         "storage",
         "unlimitedStorage",
         "webview",
+        "browser",
         "https://www.google-analytics.com/"
     ],
     "commands": {
