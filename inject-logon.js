@@ -69,12 +69,19 @@ script.textContent = '!' + function() {
         var emailField = document.querySelector('#email');
         var passwordField = document.querySelector('#password');
         var signInButton = document.querySelector('#signin');
+        var rememberCheckbox = document.querySelector('#stay_signed_in');
         
         if (!emailField || !passwordField || !signInButton) {
             return;
         }
         
         signInButton.addEventListener('click', function() {
+            // If the checkbox is not found for some reason, or it is not
+            // checked, do not remember this login.
+            if (!rememberCheckbox || !rememberCheckbox.checked) {
+                return;
+            }
+            
             send({
                 type: 'account',
                 email: emailField.value,
