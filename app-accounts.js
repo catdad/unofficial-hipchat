@@ -45,6 +45,8 @@ window.addEventListener('load', function() {
         done = $.func(done);
         
         chrome.storage.local.get(function(data) {
+            data[accountsKey] = data[accountsKey] || {};
+            
             $.forEach(ACCOUNTS, function(ac, key) {
                 data[accountsKey][key] = ac;
             });
