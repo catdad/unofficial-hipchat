@@ -5,6 +5,18 @@
     var $ = function(sel) {
         return document.querySelector(sel);
     };
+    
+    function select(sel, dom) {
+        return [].slice.call(dom.querySelectorAll(sel) || []);
+    }
+    
+    $.all = function(sel) {
+        return select(sel, document);
+    };
+    
+    $.allIn = function(sel, dom) {
+        return select(sel, dom.querySelectorAll ? dom : document);
+    };
 
     $.forEach = function(obj, cb, context){
         // check for a native forEach function
