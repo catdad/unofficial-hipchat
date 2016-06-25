@@ -1,4 +1,4 @@
-/* jshint browser: true, devel: true */
+/* jshint browser: true, devel: true, expr: true */
 /* global chrome, analytics, $ */
 
 window.addEventListener('load', function() {
@@ -14,6 +14,15 @@ window.addEventListener('load', function() {
         ev.stopPropagation();
     }
     
+    function sendAnalytics(category, action) {
+        category = category || 'Default';
+        action = action || 'default';
+        
+        if (window.tracker && window.tracker.sendEvent) {
+            window.tracker.sendEvent(category, action);
+        }
+    }
+    
     function open(link) {
         return function opener(ev) {
             kill(ev);
@@ -26,16 +35,27 @@ window.addEventListener('load', function() {
     
     function show() {
         loader.classList.remove(HIDDEN);
+        sendAnalytics('Loader', 'show');
     }
     
     function hide() {
         loader.classList.add(HIDDEN);
+        sendAnalytics('Loader', 'hide');
+        cancelTroubleshoot && cancelTroubleshoot();
     }
     
     function showTroughleshootingEventually() {
-        setTimeout(function() {
+        var timeout = setTimeout(function() {
             troubleshoot.classList.add('show');
+            sendAnalytics('Loader', 'troubleshoot');
         }, 1000 * 15);
+        
+        return function clearTroubleshootTimeout() {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = undefined;
+            }
+        };
     }
     
     webview.addEventListener('contentload', function() {
@@ -44,7 +64,10 @@ window.addEventListener('load', function() {
         }
     });
     
-    close.addEventListener('click', hide);
+    close.addEventListener('click', function() {
+        hide();
+        sendAnalytics('Loader', 'forceclose');
+    });
     
     $.forEach(links, function(link) {
         link.addEventListener('click', open(link));
@@ -53,5 +76,5 @@ window.addEventListener('load', function() {
     $.on('showLoader', show);
     $.on('hideLoader', hide);
     
-    showTroughleshootingEventually();
+    var cancelTroubleshoot = showTroughleshootingEventually();
 });
