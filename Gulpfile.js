@@ -1,4 +1,4 @@
-/* jshint node: true */
+/* jshint node: true, esversion: 6 */
 
 var path = require('path').posix;
 
@@ -35,17 +35,11 @@ var Version = function(verStr) {
     this.minorRevision = arr[4] || undefined;
     
     this.toString = function() {
-        var tempArr = [this.major, this.minor, this.majorRevision, this.minorRevision];
-        var arr = [];
-        var temp = tempArr.shift();
         
-        // the hell am I doing here?
-        while(temp !== undefined) {
-            arr.push(temp);
-            temp = tempArr.shift();
-        }
+        return [this.major, this.minor, this.majorRevision, this.minorRevision]
+            .filter( v => !!v )
+            .join('.');
         
-        return arr.join('.');
     };
 };
 
