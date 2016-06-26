@@ -39,6 +39,7 @@ var Version = function(verStr) {
         var arr = [];
         var temp = tempArr.shift();
         
+        // the hell am I doing here?
         while(temp !== undefined) {
             arr.push(temp);
             temp = tempArr.shift();
@@ -135,7 +136,8 @@ gulp.task('manifest', function() {
         .pipe(gulp.dest(BuildDest));
 });
 gulp.task('html', function() {
-    gulp.src(HTMLSource).pipe(gulp.dest(BuildDest));
+    gulp.src(HTMLSource)
+        .pipe(gulp.dest(BuildDest));
 });
 
 gulp.task('js', function() {
@@ -158,9 +160,7 @@ gulp.task('zip', ['assets', 'js', 'html', 'manifest'], function() {
 });
 
 gulp.task('build', ['less', 'assets', 'js', 'html', 'manifest'], function() {
-    if (production) {
-        return gulp.start('zip');
-    }
+    return gulp.start('zip');
 });
 
 gulp.task('default', ['clean'], function() {
@@ -176,6 +176,8 @@ gulp.task('watch', ['default'], function() {
 //    gulp.watch(AssetsSource, ['assets']);
     gulp.watch(LessSource, ['less']);
 });
+
+gulp.task('noop', []);
 
 
 // TODO this does not really belong in the file
