@@ -35,11 +35,9 @@ var Version = function(verStr) {
     this.minorRevision = arr[4] || undefined;
     
     this.toString = function() {
-        
         return [this.major, this.minor, this.majorRevision, this.minorRevision]
             .filter( v => !!v )
             .join('.');
-        
     };
 };
 
@@ -170,9 +168,6 @@ gulp.task('watch', ['default'], function() {
 //    gulp.watch(AssetsSource, ['assets']);
     gulp.watch(LessSource, ['less']);
 });
-
-gulp.task('noop', []);
-
 
 // TODO this does not really belong in the file
 function isLeap(y){
