@@ -8,6 +8,8 @@ window.addEventListener('load', function() {
     var STORED_DATA = window.__storedData__ || {};
     window.__storedData__ = STORED_DATA;
     
+    var webview = $('#chat');
+    
     var accountsKey = 'accounts';
     var ACCOUNTS = STORED_DATA[accountsKey] || {};
     STORED_DATA[accountsKey] = ACCOUNTS;
@@ -210,6 +212,8 @@ window.addEventListener('load', function() {
     APP.accountMessage = accountMessage;
     APP.sendLogon = sendLogon;
     
-    $.once('ready', sendLogon);
+//    $.once('ready', sendLogon);
     $.on('accountMessage', accountMessage);
+    
+    webview.addEventListener('contentload', sendLogon);
 });
