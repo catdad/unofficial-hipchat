@@ -21,10 +21,8 @@ After installing Node, building is as easy as:
 
     npm install
     gulp
-    
-Build for release:
 
-    gulp build
+This will create the `build` folder, populate the necessary files, and create a zip file that is ready to publish to the Chrome App Store.
     
 Active development:
 
