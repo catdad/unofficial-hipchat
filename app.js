@@ -375,6 +375,9 @@ window.addEventListener('load', function() {
             case chrome.idle.IdleState.ACTIVE:
                 console.log('is active');
                 sendAnalytics('State', 'active');
+                
+                // clear notifications
+                messageCount(0);
                 break;
             case chrome.idle.IdleState.IDLE:
                 console.log('is idle');
